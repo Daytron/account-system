@@ -9,9 +9,20 @@ package com.gilera.ryan.accountsystem.account;
  *
  * @author Ryan Gilera
  */
-public class CurrentAccount extends BaseAccount {
-
-    public CurrentAccount(String owner, int acc_num, int _id) {
-        super(owner, acc_num, AccountType.CURRENT, _id);
+public enum AccountType {
+    BUSINESS("Business"),
+    CURRENT("Current"),
+    SAVINGS("Savings");
+    
+    private final String text;
+    
+    private AccountType(String text) {
+        this.text = text;
     }
+
+    public String getText() {
+        return text;
+    }
+    
+    
 }

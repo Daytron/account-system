@@ -12,6 +12,6 @@ package com.gilera.ryan.accountsystem.account;
 public class SMBAccount extends BaseAccount {
 
     public SMBAccount(String owner, int acc_num, int _id) {
-        super(owner, acc_num, "Current", _id);
+        super(owner, acc_num, AccountType.CURRENT, _id);
     }
 }

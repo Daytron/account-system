@@ -12,6 +12,6 @@ package com.gilera.ryan.accountsystem.account;
 public class SavingsAccount extends BaseAccount {
 
     public SavingsAccount(String owner, int acc_num, int _id) {
-        super(owner, acc_num, "Current", _id);
+        super(owner, acc_num, AccountType.SAVINGS, _id);
     }
 }

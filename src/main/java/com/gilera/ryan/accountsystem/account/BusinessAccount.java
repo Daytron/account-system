@@ -12,6 +12,6 @@ package com.gilera.ryan.accountsystem.account;
 public class BusinessAccount extends BaseAccount {
 
     public BusinessAccount(String business_name, int acc_num, int _id) {
-        super(business_name, acc_num, "Business", _id);
+        super(business_name, acc_num, AccountType.BUSINESS, _id);
     }
 }

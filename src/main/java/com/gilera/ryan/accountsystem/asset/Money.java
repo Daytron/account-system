@@ -148,6 +148,11 @@ public final class Money {
 
         valueString = valueString.trim();
         
+        // Removes currency symbol and extra spaces if detected
+        if (valueString.contains(CURRENCY_SYMBOL + " ")) {
+            valueString = valueString.replace(CURRENCY_SYMBOL + " ", "");
+        }
+        
         // Removes commas
         // Allows to accept number string with commas
         if (valueString.contains(",")) {
@@ -470,9 +475,8 @@ public final class Money {
         if (money == null) {
             return null;
         }
-        String moneyStr = money.toString().replace(",", "");
 
-        return multipliedBy(moneyStr);
+        return multipliedBy(money.toString());
     }
 
     public Money dividedBy(Money money) {
@@ -711,7 +715,7 @@ public final class Money {
             penceStr = Long.toString(getPence());
         }
 
-        return signText + poundsStr + DECIMAL_POINT + penceStr;
+        return CURRENCY_SYMBOL + " " + signText + poundsStr + DECIMAL_POINT + penceStr;
     }
 
     public boolean isPositiveOrZero() {

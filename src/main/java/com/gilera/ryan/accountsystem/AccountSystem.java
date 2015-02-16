@@ -14,6 +14,7 @@ import com.gilera.ryan.accountsystem.ui.Menu;
 public class AccountSystem {
     public static void main (String args[])
         {
-            new Menu();
+            Menu appMenu = new Menu();
+            appMenu.launch();
         }
 }

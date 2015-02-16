@@ -11,5 +11,5 @@ package com.gilera.ryan.accountsystem.account;
  */
 public interface Account {
     public void deposit(double amount); 
-    public double get_balance();
+    public double getBalance();
 }

@@ -14,10 +14,10 @@ import java.util.Date;
 public class Transaction {
 
     Date time;
-    String transactionType;
+    TransactionType transactionType;
     double amount;
 
-    public Transaction(Date _time, String _transactionType, double _amount) {
+    public Transaction(Date _time, TransactionType _transactionType, double _amount) {
         time = _time;
         transactionType = _transactionType;
         amount = _amount;
@@ -28,7 +28,7 @@ public class Transaction {
         return time;
     }
 
-    public String getType() {
+    public TransactionType getTransactionType() {
         return transactionType;
     }
 

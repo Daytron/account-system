@@ -8,6 +8,7 @@ package com.gilera.ryan.accountsystem.account;
 import java.util.ArrayList;
 import java.util.Date;
 import com.gilera.ryan.accountsystem.log.Transaction;
+import com.gilera.ryan.accountsystem.log.TransactionType;
 
 /**
  *
@@ -16,28 +17,29 @@ import com.gilera.ryan.accountsystem.log.Transaction;
 public class BaseAccount implements Account {
 
     public double balance;
-    ArrayList<String> holders = new ArrayList<>();
-    ArrayList<Transaction> transactions = new ArrayList<>();
+    ArrayList<String> listOfAccountHolders = new ArrayList<>();
+    ArrayList<Transaction> listOfTransactions = new ArrayList<>();
     public double interestRate;
     public int acc_number;
-    public String account_type;
+    public final AccountType accountType;
     int id;
 
     //Set up a new account 
-    public BaseAccount(String acc_owner, int acc_num, String acc_type, int _id) {
-        holders.add(acc_owner);
-        acc_number = acc_num;
-        account_type = acc_type;
+    public BaseAccount(String accountName, int accountNumber, 
+            AccountType accountType, int _id) {
+        this.listOfAccountHolders.add(accountName);
+        this.acc_number = accountNumber;
+        this.accountType = accountType;
     }
 
     //Add account holder 
-    public void AddAccHolder(String acc_owner, int acc_num) {
-        holders.add(acc_owner);
-        acc_number = acc_num;
+    public void AddAccHolder(String accountName, int accountNumber) {
+        listOfAccountHolders.add(accountName);
+        acc_number = accountNumber;
     }
 
     public String getHolderName() {
-        return holders.get(0);
+        return listOfAccountHolders.get(0);
     }
 
     public int getID() {
@@ -58,23 +60,23 @@ public class BaseAccount implements Account {
     }
 
     @Override
-    public double get_balance() {
+    public double getBalance() {
         return balance;
     }
 
-    public String get_acc_type() {
-        return account_type;
+    public AccountType getAccountType() {
+        return accountType;
     }
 
-    public void interest_rate() {
+    public void payWithInterest() {
         balance += interestRate * balance;
     }
 
-    public void addTransaction(Date d, String trans_Type, double amount) {
-        transactions.add(new Transaction(d, trans_Type, amount));
+    public void addTransaction(Date d, TransactionType trans_Type, double amount) {
+        listOfTransactions.add(new Transaction(d, trans_Type, amount));
     }
 
     public ArrayList<Transaction> getTransactions() {
-        return transactions;
+        return listOfTransactions;
     }
 }
