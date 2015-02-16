@@ -10,8 +10,8 @@ package com.gilera.ryan.accountsystem.account;
  * @author Ryan Gilera
  */
 public class CurrentAccount extends BaseAccount {
-    public CurrentAccount(String owner, int acc_num, int _id) 
-    { 
-        super(owner, acc_num, "Current",_id); 
-    } 
+
+    public CurrentAccount(String owner, int acc_num, int _id) {
+        super(owner, acc_num, "Current", _id);
+    }
 }

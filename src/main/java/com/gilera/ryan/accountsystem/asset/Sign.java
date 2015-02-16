@@ -25,7 +25,7 @@ public enum Sign {
     public String getText() {
         return text;
     }
-    
+
     public Sign oppositeOf() {
         if (this == Sign.Positive) {
             return Sign.Negative;

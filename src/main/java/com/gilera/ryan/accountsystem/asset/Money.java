@@ -6,8 +6,6 @@
 package com.gilera.ryan.accountsystem.asset;
 
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  *
@@ -149,6 +147,13 @@ public final class Money {
         final String[] parsedData = new String[3];
 
         valueString = valueString.trim();
+        
+        // Removes commas
+        // Allows to accept number string with commas
+        if (valueString.contains(",")) {
+            valueString = valueString.replace(",", "");
+        }
+        
 
         /*
          Regex conditions:
@@ -353,12 +358,12 @@ public final class Money {
         if (valueString == null || valueString.isEmpty()) {
             return null;
         }
-        
+
         String[] parsedData = Money.parseValue(valueString, false);
-        
+
         Sign thatSign, newSign;
         String thatPoundString, thatPenceString;
-        
+
         long newPounds, newPence;
 
         // Parse sign for money 2
@@ -377,7 +382,7 @@ public final class Money {
         } else {
             newSign = Sign.Negative;
         }
-        
+
         // Convert thisMoney to String literal
         // Ex. 12.34 = "1234"
         String tempThisMoney = Long.toString(getPounds());
@@ -385,29 +390,28 @@ public final class Money {
         if (getPence() < 10) {
             tempThisMoney += ZERO_STRING;
         }
-        
+
         tempThisMoney += Long.toString(getPence());
-        
+
         // Get that money string equivalent in whole numbers
         String tempThatMoney = thatPoundString + thatPenceString;
-        
+
         // Calculate the final decimal places
         // 2 is from this object which is a money object with default 2 decimal
         // places plus the money pence
         int newDecimalPlace = 2 + thatPenceString.length();
-        
+
         // Convert to long datatype
         Long tempLongThisMoney = Long.valueOf(tempThisMoney);
         Long tempLongThatMoney = Long.valueOf(tempThatMoney);
-        
-        
+
         // Do the multiplication
         Long product = tempLongThisMoney * tempLongThatMoney;
 
         if (product == 0) {
             return new Money();
         }
-        
+
         // Convert it back to String to enable to extract each number position
         String tempProduct = Long.toString(product);
 
@@ -423,7 +427,7 @@ public final class Money {
                     tempPounds += parsedNumbers[i];
                 } else {
                     // Extracts the first two decimal places
-                    if (i < (Math.abs(parsedNumbers.length-newDecimalPlace+2))) {
+                    if (i < (Math.abs(parsedNumbers.length - newDecimalPlace + 2))) {
                         tempPence += parsedNumbers[i];
                     } else {
                         // Ignore smaller decimal places
@@ -431,11 +435,11 @@ public final class Money {
                     }
                 }
             }
-            
+
             // Convert each back to long type
             newPounds = Long.valueOf(tempPounds);
             newPence = Long.valueOf(tempPence);
-            
+
         } else if (parsedNumbers.length == newDecimalPlace) {
             // Scenario where parseNumbers is exactly the same length as the
             // decimal place, which means that all of those numbers is pence digits
