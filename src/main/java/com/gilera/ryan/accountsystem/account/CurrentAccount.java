@@ -11,7 +11,8 @@ package com.gilera.ryan.accountsystem.account;
  */
 public class CurrentAccount extends BaseAccount {
 
-    public CurrentAccount(String owner, int acc_num, int _id) {
-        super(owner, acc_num, AccountType.CURRENT, _id);
+    public CurrentAccount(String accountOwner, long acc_num, long accountID) {
+        super(accountOwner, acc_num, AccountType.CURRENT, accountID, 
+                AccountType.CURRENT.getInterest());
     }
 }

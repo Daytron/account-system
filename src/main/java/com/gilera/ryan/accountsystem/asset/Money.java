@@ -140,7 +140,7 @@ public final class Money {
         return sign;
     }
 
-    public static String[] parseValue(String valueString, boolean isPenceOnly) {
+    private static String[] parseValue(String valueString, boolean isPenceOnly) {
         // First element = sign 1 for positive and 0 for negative
         // Second element for pounds
         // Third element for pence
@@ -717,6 +717,14 @@ public final class Money {
 
         return CURRENCY_SYMBOL + " " + signText + poundsStr + DECIMAL_POINT + penceStr;
     }
+    
+    public boolean isLessThanOrEqualTo(Money money) {
+        return isLessThan(money) || isEqualTo(money);
+    }
+    
+    public boolean isGreaterThanOrEqualTo(Money money) {
+        return isGreaterThan(money) || isEqualTo(money);
+    }
 
     public boolean isPositiveOrZero() {
         return getSign() == Sign.Positive;
@@ -733,4 +741,6 @@ public final class Money {
     public boolean isZero() {
         return getPounds() == 0 && getPence() == 0;
     }
+    
+    
 }

@@ -5,11 +5,13 @@
  */
 package com.gilera.ryan.accountsystem.account;
 
+import com.gilera.ryan.accountsystem.asset.Money;
+
 /**
  *
  * @author Ryan Gilera
  */
 public interface Account {
-    public void deposit(double amount); 
-    public double getBalance();
+    public void deposit(Money amount); 
+    public Money getBalance();
 }

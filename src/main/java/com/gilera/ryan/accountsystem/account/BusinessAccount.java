@@ -5,13 +5,15 @@
  */
 package com.gilera.ryan.accountsystem.account;
 
+
 /**
  *
  * @author Ryan Gilera
  */
 public class BusinessAccount extends BaseAccount {
 
-    public BusinessAccount(String business_name, int acc_num, int _id) {
-        super(business_name, acc_num, AccountType.BUSINESS, _id);
+    public BusinessAccount(String accountOwner, long acc_num, long accountID) {
+        super(accountOwner, acc_num, AccountType.BUSINESS, accountID, 
+                AccountType.BUSINESS.getInterest());
     }
 }

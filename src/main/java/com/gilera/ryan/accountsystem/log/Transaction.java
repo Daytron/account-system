@@ -5,6 +5,7 @@
  */
 package com.gilera.ryan.accountsystem.log;
 
+import com.gilera.ryan.accountsystem.asset.Money;
 import java.util.Date;
 
 /**
@@ -13,27 +14,28 @@ import java.util.Date;
  */
 public class Transaction {
 
-    Date time;
-    TransactionType transactionType;
-    double amount;
+    private final Date dateOfTransaction;
+    private final TransactionType transactionType;
+    private final Money amount;
 
-    public Transaction(Date _time, TransactionType _transactionType, double _amount) {
-        time = _time;
-        transactionType = _transactionType;
-        amount = _amount;
+    public Transaction(Date logDate, TransactionType 
+            transactionType, Money amountToLog) {
+        this.dateOfTransaction = logDate;
+        this.transactionType = transactionType;
+        this.amount = amountToLog;
 
     }
 
-    public Date getDate() {
-        return time;
+    public Date getDateOfTransaction() {
+        return dateOfTransaction;
     }
 
     public TransactionType getTransactionType() {
         return transactionType;
     }
 
-    public double getAmount() {
-        return amount;
+    public String getAmountInString() {
+        return amount.toString();
     }
 
 }
