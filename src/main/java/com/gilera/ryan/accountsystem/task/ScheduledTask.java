@@ -38,8 +38,6 @@ public class ScheduledTask extends TimerTask {
         }
     }
 
-    
-
     @Override
     public void run() {
         // Do automatic interest
