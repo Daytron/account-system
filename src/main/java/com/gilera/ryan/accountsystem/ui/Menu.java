@@ -8,19 +8,24 @@ package com.gilera.ryan.accountsystem.ui;
 import com.gilera.ryan.accountsystem.account.AccountType;
 import com.gilera.ryan.accountsystem.account.BaseAccount;
 import com.gilera.ryan.accountsystem.account.BusinessAccount;
+import com.gilera.ryan.accountsystem.account.CashInvestmentAccount;
+import com.gilera.ryan.accountsystem.account.ChildAccount;
 import com.gilera.ryan.accountsystem.account.CurrentAccount;
 import com.gilera.ryan.accountsystem.account.IRAccount;
+import com.gilera.ryan.accountsystem.account.InternationalAccount;
 import com.gilera.ryan.accountsystem.account.SMBAccount;
 import com.gilera.ryan.accountsystem.account.SavingsAccount;
 import com.gilera.ryan.accountsystem.account.StudentAccount;
 import com.gilera.ryan.accountsystem.asset.Money;
 import com.gilera.ryan.accountsystem.log.Transaction;
 import com.gilera.ryan.accountsystem.log.TransactionType;
+import com.gilera.ryan.accountsystem.task.ScheduledTask;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Timer;
 
 /**
  *
@@ -31,7 +36,7 @@ public class Menu {
     private final Map<String, Integer> optionsForMainMenu;
     private final Map<String, Integer> optionsForNewAccountMenu;
     private static final int TOTAL_MAIN_MENU_OPTIONS = 10;
-    private static final int TOTAL_ACCOUNT_TYPES = 7;
+    private static final int TOTAL_ACCOUNT_TYPES = 10;
     private static final long INITIAL_ACCOUNT_NUMBER = 1000000;
     private static final long INITIAL_CLIENT_ID = 0;
 
@@ -39,8 +44,9 @@ public class Menu {
     private final ArrayList<BaseAccount> accounts;
     private long newReadyAccountNumberToUse;
     private long newReadyClientIDToUse;
+    private final ScheduledTask scheduledTask;
 
-    public Menu() {
+    private Menu() {
         this.optionsForMainMenu = new HashMap<>();
         // Populate options from 0 to (TOTAL_MAIN_MENU_OPTIONS - 1)
         // This is for input verification later on in the menu selection
@@ -62,6 +68,17 @@ public class Menu {
         this.newReadyAccountNumberToUse = INITIAL_ACCOUNT_NUMBER;
         // Starts at +1
         this.newReadyClientIDToUse = INITIAL_CLIENT_ID;
+
+        this.scheduledTask = ScheduledTask.getInstance();
+        this.scheduledTask.setAccounts(accounts);
+
+        Timer updateEvery3Minutes = new Timer(true);
+
+        // An interval rate of every 3 minutes with initital delay of 3 minutes
+        // 2nd parameter is the one time initial delay, 3rd is interval
+        updateEvery3Minutes.scheduleAtFixedRate(scheduledTask,
+                ScheduledTask.getINTERVAL_TIME(),
+                ScheduledTask.getINTERVAL_TIME());
     }
 
     public void launch() {
@@ -134,7 +151,7 @@ public class Menu {
             if (!isPressEnterKeySkip) {
                 pressAnyKeyToContinue();
             }
-            
+
         }
 
         System.out.println(ConstantString.END_MESSAGE.getText());
@@ -215,6 +232,25 @@ public class Menu {
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.IRA);
                 break;
+
+            case 7:
+                accounts.add(new CashInvestmentAccount(
+                        clientName, newReadyAccountNumberToUse, clientID));
+                displayResultForNewAccountCreation(AccountType.CASH_INVESTMENT);
+                break;
+
+            case 8:
+                accounts.add(new ChildAccount(
+                        clientName, newReadyAccountNumberToUse, clientID));
+                displayResultForNewAccountCreation(AccountType.CHILD);
+                break;
+                
+            case 9:
+                accounts.add(new InternationalAccount(
+                        clientName, newReadyAccountNumberToUse, clientID));
+                displayResultForNewAccountCreation(AccountType.INTERNATIONAL);
+                break;
+            
 
             default:
                 break;
@@ -298,9 +334,24 @@ public class Menu {
             return;
         }
 
+        // Check if amoutn has reached max amount per withdrawal
+        if (amountToWithdraw.isGreaterThan(
+                accountToWithdraw.getAccountType().getMaxWithdrawal())) {
+            displayMenuResultSeparator();
+            // Error message for overlimit withdrawals
+            System.out.println(ConstantString.ERROR_OVERLIMIT_MAX_WITHDRAW_PART1.getText()
+                    + accountToWithdraw.getAccountType().getText().toLowerCase()
+                    + ConstantString.ERROR_OVERLIMIT_MAX_WITHDRAW_PART2.getText()
+                    + accountToWithdraw.getAccountType().getMaxWithdrawalStr()
+                    + ConstantString.ERROR_OVERLIMIT_MAX_WITHDRAW_PART3.getText());
+            return;
+        }
+
         // Process withdrawals
-        if (amountToWithdraw.isLessThanOrEqualTo(
-                Money.valueOf(accountToWithdraw.getAccountType().getMaxWithdrawalStr()))) {
+        // Condition if ((balance - amountToWithdraw) >= limit)
+        Money newPotentialBalance = accountToWithdraw.getBalance().minus(amountToWithdraw);
+        if (newPotentialBalance.isGreaterThanOrEqualTo(
+                accountToWithdraw.getAccountType().getOverdraftLimit())) {
             accountToWithdraw.withdraw(amountToWithdraw);
             accountToWithdraw.addTransaction(new Date(),
                     TransactionType.WITHDRAW, amountToWithdraw);
@@ -309,12 +360,10 @@ public class Menu {
             System.out.println(ConstantString.SUCCESS_WITHDRAWAL.getText());
         } else {
             displayMenuResultSeparator();
-            // Error message for overlimit withdrawals
-            System.out.println(ConstantString.ERROR_OVERLIMIT_MAX_WITHDRAW_PART1
-                    + accountToWithdraw.getAccountType().getText().toLowerCase()
-                    + ConstantString.ERROR_OVERLIMIT_MAX_WITHDRAW_PART2
-                    + accountToWithdraw.getAccountType().getMaxWithdrawalStr()
-                    + ConstantString.ERROR_OVERLIMIT_MAX_WITHDRAW_PART3);
+            // display overlimit overdraft error message
+            System.out.println(
+                    ConstantString.ERROR_OVERLIMIT_OVERDRAFT_WITHDRAWAL.getText());
+
         }
 
     }
@@ -356,8 +405,7 @@ public class Menu {
             accountTo.addTransaction(new Date(),
                     TransactionType.TRANSFER, amountToTransfer);
         } else {
-            System.out.println(ConstantString
-                    .ERROR_MSG_INSUFFICIENT_AMOUNT_TO_TRANSFER.getText());
+            System.out.println(ConstantString.ERROR_MSG_INSUFFICIENT_AMOUNT_TO_TRANSFER.getText());
             return;
         }
 
@@ -505,16 +553,16 @@ public class Menu {
     }
 
     private Money processInputForMoney(String messageToUser) {
-        Money money;
+        Money amountGiven;
 
         System.out.println(messageToUser);
-        String moneyReceivedStr = this.input.nextLine();
+        String amountGivenStr = this.input.nextLine();
 
         try {
-            money = Money.valueOf(moneyReceivedStr);
+            amountGiven = Money.valueOf(amountGivenStr);
 
-            if (money != null) {
-                return money;
+            if (amountGiven != null) {
+                return amountGiven;
             }
         } catch (Exception e) {
         }
@@ -538,6 +586,14 @@ public class Menu {
             System.out.println(ConstantString.ERROR_INVALID_NAME.getText());
             return null;
         }
+    }
+    
+    public static Menu getInstance() {
+        return MenuHolder.INSTANCE;
+    }
+    
+    private static class MenuHolder {
+        private static final Menu INSTANCE = new Menu();
     }
 
 }

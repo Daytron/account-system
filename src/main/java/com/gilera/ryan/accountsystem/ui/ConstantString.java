@@ -31,6 +31,9 @@ enum ConstantString {
             + "4. Business Account\n"
             + "5. SMB Account\n"
             + "6. IR Account\n"
+            + "7. Cash Investment Account\n"
+            + "8. Child Account\n"
+            + "9. International Account\n"
             + "0. Cancel account creation.\n"),
     ////// ERROR MESSAGES
     ERROR_MSG_ACCOUNT_NUMBER("Error! Invalid account number entered."),
@@ -42,6 +45,8 @@ enum ConstantString {
     ERROR_OVERLIMIT_MAX_WITHDRAW_PART1("Error! The maximum daily withdrawal for a "),
     ERROR_OVERLIMIT_MAX_WITHDRAW_PART2(" account is "),
     ERROR_OVERLIMIT_MAX_WITHDRAW_PART3(". This transaction has been cancelled"),
+    ERROR_OVERLIMIT_OVERDRAFT_WITHDRAWAL("Error! This account cannot exceed its "
+            + "overdraft limit. Cancelling transaction..."),
     ERROR_PAY_WITH_INTEREST_EMPTY_LIST("Error! There are no accounts stored."),
     ERROR_TRANSACTION_EMPTY("Error! There is no transactions on this account."),
     

@@ -14,7 +14,9 @@ public enum TransactionType {
     DEPOSIT("Deposit"),
     VIEW_BALANCE("View Balance"),
     WITHDRAW("Withdraw"),
-    TRANSFER("Transfer");
+    TRANSFER("Transfer"),
+    PAID_INTEREST("Paid Interest"),
+    PAID_OVERDRAFT_PENALTY("Paid Overdraft Penalty");
 
     private final String text;
 

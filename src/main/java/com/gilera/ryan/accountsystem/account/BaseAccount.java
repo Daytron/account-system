@@ -6,19 +6,21 @@
 package com.gilera.ryan.accountsystem.account;
 
 import com.gilera.ryan.accountsystem.asset.Money;
+import com.gilera.ryan.accountsystem.asset.Sign;
 import java.util.ArrayList;
 import java.util.Date;
 import com.gilera.ryan.accountsystem.log.Transaction;
 import com.gilera.ryan.accountsystem.log.TransactionType;
 import java.util.List;
-import java.util.UUID;
 
 /**
  *
  * @author Ryan Gilera
  */
 public class BaseAccount implements Account {
-
+    private static final Money OVERDRAFT_PENALTY_FEE = 
+            new Money(Sign.Positive, 20, 00);
+    
     private Money balance;
     private final List<String> listOfAccountHolders;
     private final List<Transaction> listOfTransactions;
@@ -85,9 +87,31 @@ public class BaseAccount implements Account {
     }
 
     public void payWithInterest() {
-        balance = (this.balance.multipliedBy(
+        // if balance is less than or equal to zero
+        // skip interest
+        if (this.balance.isLessThanOrEqualTo(new Money())) {
+            return;
+        }
+        
+        this.balance = (this.balance.multipliedBy(
                 Double.toString(getAccountType().getInterest())))
                 .plus(this.balance);
+        
+        addTransaction(new Date(), TransactionType.PAID_INTEREST, this.balance);
+        
+        //System.out.println("Acount: " + getAccountNum()
+        //    + " Balance: " + getBalance());
+    }
+    
+    public void applyOverdraftPenaltyIfPossible() {
+        if (getBalance().isLessThan(new Money())){
+            //System.out.print("Overdraft detected. " +
+            //        "Previous balance " + getBalance() + ".");
+            this.balance = this.balance.minus(OVERDRAFT_PENALTY_FEE);
+            //System.out.println(" New balance: " + getBalance() + ".");
+            addTransaction(new Date(), TransactionType.PAID_OVERDRAFT_PENALTY, 
+                    this.balance);
+        }
     }
 
     public void addTransaction(Date date, TransactionType transactionType, 
