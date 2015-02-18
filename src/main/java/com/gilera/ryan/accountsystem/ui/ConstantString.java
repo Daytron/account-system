@@ -86,8 +86,7 @@ enum ConstantString {
     SUCCESS_TRANSFER("Payment has been successfully transferred"),
     SUCCESS_PAY_INTEREST_MANUALLY("Interest has been paid"),
     SUCCESS_WITHDRAWAL("Account successfully withdrawn."),
-    SUCESS_VIEW_ACCOUNT("Account information retrieved. Here are "
-            + "the information:"),
+    SUCESS_VIEW_ACCOUNT("Account information successfully retrieved."),
     SUCCESS_BALANCE("The client account balance is: "),
     
     END_MESSAGE("Thank you for using automatic banking teller. "
