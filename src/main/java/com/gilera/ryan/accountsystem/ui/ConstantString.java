@@ -11,9 +11,13 @@ package com.gilera.ryan.accountsystem.ui;
  */
 enum ConstantString {
     
-    MENU_SEPARATOR("\n###########################"),
-    MENU_RESULT_SEPARATOR("\n-------------------------"),
-    MENU("What would you like to do? \n"
+    ///// MENU SEPRATORS
+///// MENU SEPRATORS
+    MENU_SEPARATOR_MAIN("\n###########################"),
+    MENU_SEPARATOR_RESULT("\n-------------------------"),
+    
+    ///// MENUS
+    MENU_MAIN("What would you like to do? \n"
             + "1. Create New Account\n"
             + "2. Deposit\n"
             + "3. Display Balance\n"
@@ -21,10 +25,10 @@ enum ConstantString {
             + "5. Transfer Money\n"
             + "6. Pay Interest\n"
             + "7. Add Account Holder\n"
-            + "8. Show all accounts Held by a customer\n"
+            + "8. Show all accounts held by a customer\n"
             + "9. View Transactions\n"
             + "0. Exit\n"),
-    NEW_ACCOUNTS_MENU("Choose from any of these accounts.\n"
+    MENU_NEW_ACCOUNTS("Choose from any of these accounts.\n"
             + "1. Current Account\n"
             + "2. Savings Account\n"
             + "3. Student Account\n"
@@ -34,7 +38,15 @@ enum ConstantString {
             + "7. Cash Investment Account\n"
             + "8. Child Account\n"
             + "9. International Account\n"
-            + "0. Cancel account creation.\n"),
+            + "0. Cancel account creation\n"),
+    MENU_VIEW_TRANSACTIONS("Filter results by any of these of options: \n"
+            + "1. View all transactions of all accounts\n"
+            + "2. View all transactions for one account\n"
+            + "3. View all transactions by certain date range for one account\n"
+            + "4. View all transactions by type for one account\n"
+            + "0. Cancel operation\n"),
+    MENU_VIEW_TRANSACTIONS_BY_TYPE(""),
+    
     ////// ERROR MESSAGES
     ERROR_MSG_ACCOUNT_NUMBER("Error! Invalid account number entered."),
     ERROR_INVALID_NAME("Error! Invalid name entered."),
@@ -48,10 +60,12 @@ enum ConstantString {
     ERROR_OVERLIMIT_OVERDRAFT_WITHDRAWAL("Error! This account cannot exceed its "
             + "overdraft limit. Cancelling transaction..."),
     ERROR_PAY_WITH_INTEREST_EMPTY_LIST("Error! There are no accounts stored."),
+    ERROR_ALL_TRANSACTIONS_EMPTY("Error! There are no transactions stored yet."),
     ERROR_TRANSACTION_EMPTY("Error! There is no transactions on this account."),
     
     ///// CANCEL MESSAGES
     CANCEL_NEW_ACCOUNT("The account creation has been cancelled. "),
+    CANCEL_VIEW_TRANSACTIONS("The view transaction operation has been cancelled."),
     
     ///// CONFIRMATION MESSAGES
     CONFIRM_EXIT_QUESTION("Are you sure you want to exit? (y/n):"),
@@ -66,8 +80,9 @@ enum ConstantString {
     ENTER_TRANSFER_AMOUNT("Enter transfer amount: "),
     ENTER_WITHDRAW_AMOUNT("Enter withdraw amount: "),
     
-    
     ///// SUCCESS MESSAGES
+    SUCCESS_VIEW_TRANSACTIONS_SINGLE("Transaction logs for: "),
+    SUCCESS_VIEW_TRANSACTIONS_ALL("Transaction logs for all accounts: "),
     SUCCESS_TRANSFER("Payment has been successfully transferred"),
     SUCCESS_PAY_INTEREST_MANUALLY("Interest has been paid"),
     SUCCESS_WITHDRAWAL("Account successfully withdrawn."),
@@ -75,7 +90,7 @@ enum ConstantString {
     SUCCESS_BALANCE("The client account balance is: "),
     
     END_MESSAGE("Thank you for using automatic banking teller. "
-                + "Have a good day.")
+                + "Have a good day.\n")
     
     ;
     

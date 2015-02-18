@@ -35,13 +35,15 @@ public class Menu {
 
     private final Map<String, Integer> optionsForMainMenu;
     private final Map<String, Integer> optionsForNewAccountMenu;
+    private final Map<String, Integer> optionsForViewTransactionsMenu;
     private static final int TOTAL_MAIN_MENU_OPTIONS = 10;
-    private static final int TOTAL_ACCOUNT_TYPES = 10;
+    private static final int TOTAL_NEW_ACCOUNT_OPTIONS = 10;
+    private static final int TOTAL_VIEW_TRANSACTIONS_OPTIONS = 5;
     private static final long INITIAL_ACCOUNT_NUMBER = 1000000;
     private static final long INITIAL_CLIENT_ID = 0;
 
     private final Scanner input;
-    private final ArrayList<BaseAccount> accounts;
+    private final ArrayList<BaseAccount> listOfAccounts;
     private long newReadyAccountNumberToUse;
     private long newReadyClientIDToUse;
     private final ScheduledTask scheduledTask;
@@ -57,12 +59,17 @@ public class Menu {
         // Populate options from 1 to TOTAL_ACCOUNT_TYPES
         // This is for input verification later on in the menu selection
         this.optionsForNewAccountMenu = new HashMap<>();
-        for (int i = 0; i < TOTAL_ACCOUNT_TYPES; i++) {
+        for (int i = 0; i < TOTAL_NEW_ACCOUNT_OPTIONS; i++) {
             this.optionsForNewAccountMenu.put(Integer.toString(i), i);
         }
 
+        this.optionsForViewTransactionsMenu = new HashMap<>();
+        for (int i = 0; i < TOTAL_VIEW_TRANSACTIONS_OPTIONS; i++) {
+            this.optionsForViewTransactionsMenu.put(Integer.toString(i), i);
+        }
+
         this.input = new Scanner(System.in);
-        this.accounts = new ArrayList<>();
+        this.listOfAccounts = new ArrayList<>();
         // Fix at 7 digits
         // Starts at +1
         this.newReadyAccountNumberToUse = INITIAL_ACCOUNT_NUMBER;
@@ -70,7 +77,7 @@ public class Menu {
         this.newReadyClientIDToUse = INITIAL_CLIENT_ID;
 
         this.scheduledTask = ScheduledTask.getInstance();
-        this.scheduledTask.setAccounts(accounts);
+        this.scheduledTask.setAccounts(listOfAccounts);
 
         Timer updateEvery3Minutes = new Timer(true);
 
@@ -89,7 +96,7 @@ public class Menu {
         while (!isFinish) {
 
             displayMenuSeparator();
-            System.out.println(ConstantString.MENU.getText());
+            System.out.println(ConstantString.MENU_MAIN.getText());
             userOptionResponse = processInputForMenuOptions(this.optionsForMainMenu);
 
             switch (userOptionResponse) {
@@ -154,6 +161,7 @@ public class Menu {
 
         }
 
+        displayMenuSeparator();
         System.out.println(ConstantString.END_MESSAGE.getText());
 
     }
@@ -164,11 +172,11 @@ public class Menu {
     }
 
     private void displayMenuSeparator() {
-        System.out.println(ConstantString.MENU_SEPARATOR.getText());
+        System.out.println(ConstantString.MENU_SEPARATOR_MAIN.getText());
     }
 
     private void displayMenuResultSeparator() {
-        System.out.println(ConstantString.MENU_RESULT_SEPARATOR.getText());
+        System.out.println(ConstantString.MENU_SEPARATOR_RESULT.getText());
     }
 
     private void createNewAccount() {
@@ -176,7 +184,7 @@ public class Menu {
         long clientID;
 
         // Display new account options
-        System.out.println(ConstantString.NEW_ACCOUNTS_MENU.getText());
+        System.out.println(ConstantString.MENU_NEW_ACCOUNTS.getText());
         // Get user option
         int userOptionResponse = processInputForMenuOptions(this.optionsForNewAccountMenu);
 
@@ -203,54 +211,53 @@ public class Menu {
 
         switch (userOptionResponse) {
             case 1:
-                accounts.add(new CurrentAccount(
+                listOfAccounts.add(new CurrentAccount(
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.CURRENT);
                 break;
             case 2:
-                accounts.add(new SavingsAccount(
+                listOfAccounts.add(new SavingsAccount(
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.SAVINGS);
                 break;
             case 3:
-                accounts.add(new StudentAccount(
+                listOfAccounts.add(new StudentAccount(
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.STUDENT);
                 break;
             case 4:
-                accounts.add(new BusinessAccount(
+                listOfAccounts.add(new BusinessAccount(
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.BUSINESS);
                 break;
             case 5:
-                accounts.add(new SMBAccount(
+                listOfAccounts.add(new SMBAccount(
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.SMB);
                 break;
             case 6:
-                accounts.add(new IRAccount(
+                listOfAccounts.add(new IRAccount(
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.IRA);
                 break;
 
             case 7:
-                accounts.add(new CashInvestmentAccount(
+                listOfAccounts.add(new CashInvestmentAccount(
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.CASH_INVESTMENT);
                 break;
 
             case 8:
-                accounts.add(new ChildAccount(
+                listOfAccounts.add(new ChildAccount(
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.CHILD);
                 break;
-                
+
             case 9:
-                accounts.add(new InternationalAccount(
+                listOfAccounts.add(new InternationalAccount(
                         clientName, newReadyAccountNumberToUse, clientID));
                 displayResultForNewAccountCreation(AccountType.INTERNATIONAL);
                 break;
-            
 
             default:
                 break;
@@ -266,17 +273,18 @@ public class Menu {
                 + " account has been created. \n"
                 + "\nDetailed summary:\n"
                 + "Client Name: "
-                + accounts.get(accounts.size() - 1).getHolderName()
+                + listOfAccounts.get(listOfAccounts.size() - 1).getHolderName()
                 + "\nAccount Number:"
-                + accounts.get(accounts.size() - 1).getAccountNum()
+                + listOfAccounts.get(listOfAccounts.size() - 1).getAccountNum()
                 + "\nCustomer ID: "
-                + accounts.get(accounts.size() - 1).getCustomerID()
+                + listOfAccounts.get(listOfAccounts.size() - 1).getCustomerID()
                 + "\nDefault Balance: "
-                + accounts.get(accounts.size() - 1).getBalance().toString()
-                + "\nInterest Rate: "
-                + accounts.get(accounts.size() - 1).getInterestRate() + " %"
+                + listOfAccounts.get(listOfAccounts.size() - 1).getBalance().toString()
                 + "\nMax Daily Withdrawal: "
-                + accountType.getMaxWithdrawalStr() + "\n");
+                + accountType.getMaxWithdrawalStr() 
+                + "\nOverdraft Limit: "
+                + accountType.getOverdraftLimit()
+                + "\n");
 
     }
 
@@ -302,7 +310,8 @@ public class Menu {
 
         accountToDeposit.deposit(amountToDeposit);
         accountToDeposit.addTransaction(new Date(),
-                TransactionType.DEPOSIT, amountToDeposit);
+                TransactionType.DEPOSIT, amountToDeposit,
+                accountToDeposit.getBalance());
 
         // Result Message
         displayMenuResultSeparator();
@@ -334,7 +343,7 @@ public class Menu {
             return;
         }
 
-        // Check if amoutn has reached max amount per withdrawal
+        // Check if amount has reached max amount per withdrawal
         if (amountToWithdraw.isGreaterThan(
                 accountToWithdraw.getAccountType().getMaxWithdrawal())) {
             displayMenuResultSeparator();
@@ -354,7 +363,8 @@ public class Menu {
                 accountToWithdraw.getAccountType().getOverdraftLimit())) {
             accountToWithdraw.withdraw(amountToWithdraw);
             accountToWithdraw.addTransaction(new Date(),
-                    TransactionType.WITHDRAW, amountToWithdraw);
+                    TransactionType.WITHDRAW, amountToWithdraw,
+                    accountToWithdraw.getBalance());
 
             displayMenuResultSeparator();
             System.out.println(ConstantString.SUCCESS_WITHDRAWAL.getText());
@@ -396,14 +406,22 @@ public class Menu {
             return;
         }
 
-        if (accountFrom.getBalance().isGreaterThanOrEqualTo(amountToTransfer)) {
+        
+        // Condition if ((balance - amountToTransfer) >= limit)
+        Money newPotentialBalance = accountFrom.getBalance().minus(amountToTransfer);
+        // Allows to transfer money as long the accountFrom has a balance of less than
+        // or equal to the accountFrom overdraft limit
+        if (newPotentialBalance.isGreaterThanOrEqualTo(
+            accountFrom.getAccountType().getOverdraftLimit())) {
             accountFrom.withdraw(amountToTransfer);
             accountFrom.addTransaction(new Date(),
-                    TransactionType.TRANSFER, amountToTransfer);
+                    TransactionType.TRANSFER, amountToTransfer, 
+                    accountFrom.getBalance());
 
             accountTo.deposit(amountToTransfer);
             accountTo.addTransaction(new Date(),
-                    TransactionType.TRANSFER, amountToTransfer);
+                    TransactionType.TRANSFER, amountToTransfer,
+                    accountTo.getBalance());
         } else {
             System.out.println(ConstantString.ERROR_MSG_INSUFFICIENT_AMOUNT_TO_TRANSFER.getText());
             return;
@@ -415,13 +433,13 @@ public class Menu {
     }
 
     private void payWithInterest() {
-        if (accounts.isEmpty()) {
+        if (listOfAccounts.isEmpty()) {
             System.out.println(
                     ConstantString.ERROR_PAY_WITH_INTEREST_EMPTY_LIST.getText());
             return;
         }
 
-        for (BaseAccount account : accounts) {
+        for (BaseAccount account : listOfAccounts) {
             account.payWithInterest();
         }
 
@@ -432,27 +450,75 @@ public class Menu {
     private void viewTransactions() {
         BaseAccount accountToViewTransaction;
 
-        accountToViewTransaction = processInputForAccountNumber(
-                ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
+        // Display sub menus
+        System.out.println(ConstantString.MENU_VIEW_TRANSACTIONS.getText());
 
-        if (accountToViewTransaction == null) {
+        // Get user option
+        int userOptionResponse = processInputForMenuOptions(
+                this.optionsForViewTransactionsMenu);
+        
+        if (this.listOfAccounts.isEmpty()) {
+            displayMenuResultSeparator();
+            System.out.println(ConstantString.ERROR_ALL_TRANSACTIONS_EMPTY.getText());
             return;
         }
 
-        // Check if account transactions is empty
-        if (accountToViewTransaction.isTransactionsEmpty()) {
-            System.out.println(ConstantString.ERROR_TRANSACTION_EMPTY.getText());
-            return;
+        switch (userOptionResponse) {
+            case 0:
+                displayMenuResultSeparator();
+                System.out.println(
+                    ConstantString.CANCEL_VIEW_TRANSACTIONS.getText());
+                break;
+                
+            case 1:
+                displayMenuResultSeparator();
+                System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_ALL.getText());
+                
+                for (BaseAccount account : this.listOfAccounts) {
+                    if (account.getTransactions().isEmpty()) {
+                        System.out.println("Transaction log for: " 
+                        + account.getAccountNum() + " is EMPTY.");
+                    } else {
+                        displayResultForViewTransactionsSingle(account);
+                        for (Transaction aTransaction : account.getTransactions()) {
+                            System.out.println(aTransaction);
+                        }
+                    }
+                }
+                break;
+
+            case 2:
+                accountToViewTransaction = processInputForAccountNumber(
+                        ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
+
+                if (accountToViewTransaction == null) {
+                    return;
+                }
+
+                // Check if account transactions is empty
+                if (accountToViewTransaction.isTransactionsEmpty()) {
+                    System.out.println(
+                            ConstantString.ERROR_TRANSACTION_EMPTY.getText());
+                    return;
+                }
+
+                // Display transactions
+                displayResultForViewTransactionsSingle(accountToViewTransaction);
+                
+                for (Transaction aTransaction : 
+                        accountToViewTransaction.getTransactions()) {
+                    System.out.println(aTransaction);
+                }
+                break;
         }
 
-        // Display transactions
+    }
+    
+    private void displayResultForViewTransactionsSingle(BaseAccount accountToView) {
         displayMenuResultSeparator();
-        for (Transaction aTransaction : accountToViewTransaction.getTransactions()) {
-            System.out.println(
-                    aTransaction.getTransactionType().getText()
-                    + " " + aTransaction.getDateOfTransaction()
-                    + " " + aTransaction.getAmountInString());
-        }
+        System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_SINGLE.getText());
+        System.out.println("Account name: " + accountToView.getHolderName());
+        System.out.println("Account number: " + accountToView.getAccountNum() + "\n");
     }
 
     private void addAccountHolder() {
@@ -504,7 +570,9 @@ public class Menu {
                 ConstantString.SUCCESS_BALANCE.getText()
                 + accountToViewBalance.getBalance());
         accountToViewBalance.addTransaction(new Date(),
-                TransactionType.VIEW_BALANCE, accountToViewBalance.getBalance());
+                TransactionType.VIEW_BALANCE, 
+                new Money(),
+                accountToViewBalance.getBalance());
 
     }
 
@@ -537,7 +605,7 @@ public class Menu {
             accountNumber = this.input.nextLong();
             this.input.nextLine();
 
-            for (BaseAccount anAccount : accounts) {
+            for (BaseAccount anAccount : listOfAccounts) {
                 if (anAccount.getAccountNum() == accountNumber) {
                     return anAccount;
                 }
@@ -587,12 +655,13 @@ public class Menu {
             return null;
         }
     }
-    
+
     public static Menu getInstance() {
         return MenuHolder.INSTANCE;
     }
-    
+
     private static class MenuHolder {
+
         private static final Menu INSTANCE = new Menu();
     }
 

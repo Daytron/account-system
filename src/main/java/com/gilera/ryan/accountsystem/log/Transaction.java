@@ -13,29 +13,32 @@ import java.util.Date;
  * @author Ryan Gilera
  */
 public class Transaction {
-
     private final Date dateOfTransaction;
     private final TransactionType transactionType;
     private final Money amount;
+    private final Money balance;
 
     public Transaction(Date logDate, TransactionType 
-            transactionType, Money amountToLog) {
+            transactionType, Money amountToLog, Money balance) {
         this.dateOfTransaction = logDate;
         this.transactionType = transactionType;
         this.amount = amountToLog;
-
+        this.balance = balance;
     }
 
-    public Date getDateOfTransaction() {
-        return dateOfTransaction;
+    @Override
+    public String toString() {
+        
+        
+        return "Type: " + this.transactionType.getText()
+                + "   Date: "
+                + this.dateOfTransaction
+                + "   Amount: "
+                + this.amount
+                + "   Balance after transaction: "
+                + this.balance;
     }
-
-    public TransactionType getTransactionType() {
-        return transactionType;
-    }
-
-    public String getAmountInString() {
-        return amount.toString();
-    }
+    
+    
 
 }
