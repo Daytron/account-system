@@ -111,6 +111,10 @@ public class Menu {
         boolean isPressEnterKeySkip = false;
         int userOptionResponse;
 
+        // Display title
+        System.out.println(ConstantString.WELCOME_TITLE.getText());
+        System.out.println(ConstantString.WELCOME_MESSAGE.getText());
+        
         while (!isFinish) {
 
             displayMenuSeparator();
@@ -308,7 +312,7 @@ public class Menu {
                 "\nDetailed summary:\n"
                 + "Client Name: "
                 + accountToDisplay.getHolderName()
-                + "\nAccount Number:"
+                + "\nAccount Number: "
                 + accountToDisplay.getAccountNum()
                 + "\nCustomer ID: "
                 + accountToDisplay.getCustomerID()
@@ -596,6 +600,7 @@ public class Menu {
                 
                 // if date 2 is before date 1, cancel operation
                 if (dateTo.before(dateFrom)) {
+                    displayMenuResultSeparator();
                     System.out.println(
                             ConstantString.ERROR_REVERSED_DATE_RANGE.getText());
                     return;
@@ -603,6 +608,7 @@ public class Menu {
                 
                 // if both dates are the same, cancel operation
                 if (dateTo.equals(dateFrom)) {
+                    displayMenuResultSeparator();
                     System.out.println(
                         ConstantString.ERROR_BOTH_DATES_SAME.getText());
                     return;
