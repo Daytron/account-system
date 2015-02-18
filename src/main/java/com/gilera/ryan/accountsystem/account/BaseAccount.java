@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author Ryan Gilera
  */
-public class BaseAccount implements Account {
+public abstract class BaseAccount implements Account {
 
     private static final Money OVERDRAFT_PENALTY_FEE
             = new Money(Sign.Positive, 20, 00);
@@ -25,19 +25,21 @@ public class BaseAccount implements Account {
     private Money balance;
     private final List<String> listOfAccountHolders;
     private final List<Transaction> listOfTransactions;
-    private final double interestRate;
+    private final String interestRate;
     private final long accountNumber;
     private final AccountType accountType;
     private final long clientID;
 
     //Set up a new account 
     public BaseAccount(String accountName, long accountNumber,
-            AccountType accountType, long clientID, double interestRate) {
+            AccountType accountType, long clientID, String interestRate) {
         this.listOfAccountHolders = new ArrayList<>();
         this.listOfTransactions = new ArrayList<>();
 
         this.balance = new Money();
 
+        // Remove extra spaces in the beginning and at the end
+        accountName = accountName.trim();
         // Normalise string name to lower case
         accountName = accountName.toLowerCase();
         // Converts first letter of each word to capital
@@ -81,8 +83,42 @@ public class BaseAccount implements Account {
         return accountNumber;
     }
 
-    public double getInterestRate() {
-        return interestRate * 100;
+    public String getInterestRate() {
+        return interestRate;
+    }
+    
+    public String getInterestRateInPercentage() {
+        String rate = this.interestRate;
+        
+        String[] aStringArray = rate.split("\\.");
+        
+        // Discard first element assuming interest rate should 
+        // be less than 100 percent rate
+        String newInterestRate = aStringArray[1];
+        
+        // Discard extra zeros in the first 2 digits
+        int count = 0;
+        while (true) {
+            if (count < 2 && newInterestRate.charAt(0) == '0') {
+                newInterestRate = newInterestRate.substring(1);
+                count += 1;
+            } else {
+                break;
+            }
+        }
+        
+        // Calculate decimal places to shift to percentage
+        int decimalPlaces = 2 - count;
+        
+        // Prepare the output
+        if (decimalPlaces == 0) {
+            newInterestRate = "0." + newInterestRate;
+        } else {
+            newInterestRate = newInterestRate.substring(0, decimalPlaces) 
+                    + "." + newInterestRate.substring(decimalPlaces);
+        }
+        
+        return newInterestRate;
     }
 
     public void withdraw(Money amountToWithdraw) {
@@ -111,7 +147,7 @@ public class BaseAccount implements Account {
         }
 
         Money amountWithInterest = this.balance.multipliedBy(
-                Double.toString(getAccountType().getInterest()));
+                this.interestRate);
 
         this.balance = amountWithInterest.plus(this.balance);
 
@@ -138,7 +174,7 @@ public class BaseAccount implements Account {
         listOfTransactions.add(new Transaction(date, transactionType,
                 amount, balance));
     }
-
+    
     public boolean isTransactionsEmpty() {
         return this.listOfTransactions.isEmpty();
     }

@@ -211,52 +211,62 @@ public class Menu {
 
         switch (userOptionResponse) {
             case 1:
-                listOfAccounts.add(new CurrentAccount(
-                        clientName, newReadyAccountNumberToUse, clientID));
-                displayResultForNewAccountCreation(AccountType.CURRENT);
+                CurrentAccount currentAccount = new CurrentAccount(
+                        clientName, newReadyAccountNumberToUse, clientID);
+                listOfAccounts.add(currentAccount);
+                displayResultForNewAccountCreation(currentAccount);
                 break;
             case 2:
-                listOfAccounts.add(new SavingsAccount(
-                        clientName, newReadyAccountNumberToUse, clientID));
-                displayResultForNewAccountCreation(AccountType.SAVINGS);
+                SavingsAccount savingsAccount = new SavingsAccount(
+                        clientName, newReadyAccountNumberToUse, clientID);
+                listOfAccounts.add(savingsAccount);
+                displayResultForNewAccountCreation(savingsAccount);
                 break;
             case 3:
-                listOfAccounts.add(new StudentAccount(
-                        clientName, newReadyAccountNumberToUse, clientID));
-                displayResultForNewAccountCreation(AccountType.STUDENT);
+                StudentAccount studentAccount = new StudentAccount(
+                        clientName, newReadyAccountNumberToUse, clientID);
+                listOfAccounts.add(studentAccount);
+                displayResultForNewAccountCreation(studentAccount);
                 break;
             case 4:
-                listOfAccounts.add(new BusinessAccount(
-                        clientName, newReadyAccountNumberToUse, clientID));
-                displayResultForNewAccountCreation(AccountType.BUSINESS);
+                BusinessAccount businessAccount = new BusinessAccount(
+                        clientName, newReadyAccountNumberToUse, clientID);
+                listOfAccounts.add(businessAccount);
+                displayResultForNewAccountCreation(businessAccount);
                 break;
             case 5:
-                listOfAccounts.add(new SMBAccount(
-                        clientName, newReadyAccountNumberToUse, clientID));
-                displayResultForNewAccountCreation(AccountType.SMB);
+                SMBAccount sMBAccount = new SMBAccount(
+                        clientName, newReadyAccountNumberToUse, clientID);
+                listOfAccounts.add(sMBAccount);
+                displayResultForNewAccountCreation(sMBAccount);
                 break;
             case 6:
-                listOfAccounts.add(new IRAccount(
-                        clientName, newReadyAccountNumberToUse, clientID));
-                displayResultForNewAccountCreation(AccountType.IRA);
+                IRAccount iRAccount = new IRAccount(
+                        clientName, newReadyAccountNumberToUse, clientID);
+                listOfAccounts.add(iRAccount);
+                displayResultForNewAccountCreation(iRAccount);
                 break;
 
             case 7:
-                listOfAccounts.add(new CashInvestmentAccount(
-                        clientName, newReadyAccountNumberToUse, clientID));
-                displayResultForNewAccountCreation(AccountType.CASH_INVESTMENT);
+                CashInvestmentAccount cashInvestmentAccount = new CashInvestmentAccount(
+                        clientName, newReadyAccountNumberToUse, clientID);
+                listOfAccounts.add(cashInvestmentAccount);
+                displayResultForNewAccountCreation(cashInvestmentAccount);
                 break;
 
             case 8:
-                listOfAccounts.add(new ChildAccount(
-                        clientName, newReadyAccountNumberToUse, clientID));
-                displayResultForNewAccountCreation(AccountType.CHILD);
+                ChildAccount childAccount = new ChildAccount(
+                        clientName, newReadyAccountNumberToUse, clientID);
+                listOfAccounts.add(childAccount);
+                displayResultForNewAccountCreation(childAccount);
                 break;
 
             case 9:
-                listOfAccounts.add(new InternationalAccount(
-                        clientName, newReadyAccountNumberToUse, clientID));
-                displayResultForNewAccountCreation(AccountType.INTERNATIONAL);
+                InternationalAccount internationalAccount = 
+                        new InternationalAccount(
+                        clientName, newReadyAccountNumberToUse, clientID);
+                listOfAccounts.add(internationalAccount);
+                displayResultForNewAccountCreation(internationalAccount);
                 break;
 
             default:
@@ -265,27 +275,36 @@ public class Menu {
 
     }
 
-    private void displayResultForNewAccountCreation(AccountType accountType) {
+    private void displayResultForNewAccountCreation(BaseAccount account) {
         displayMenuResultSeparator();
 
         System.out.println("A "
-                + accountType.getText().toLowerCase()
-                + " account has been created. \n"
-                + "\nDetailed summary:\n"
-                + "Client Name: "
-                + listOfAccounts.get(listOfAccounts.size() - 1).getHolderName()
-                + "\nAccount Number:"
-                + listOfAccounts.get(listOfAccounts.size() - 1).getAccountNum()
-                + "\nCustomer ID: "
-                + listOfAccounts.get(listOfAccounts.size() - 1).getCustomerID()
-                + "\nDefault Balance: "
-                + listOfAccounts.get(listOfAccounts.size() - 1).getBalance().toString()
-                + "\nMax Daily Withdrawal: "
-                + accountType.getMaxWithdrawalStr() 
-                + "\nOverdraft Limit: "
-                + accountType.getOverdraftLimit()
-                + "\n");
+                + account.getAccountType().getText().toLowerCase()
+                + " account has been created.");
+        displayAccountDetails(account);
 
+    }
+    
+    private void displayAccountDetails(BaseAccount accountToDisplay) {
+        System.out.println(
+                "\nDetailed summary:\n"
+                + "Client Name: "
+                + accountToDisplay.getHolderName()
+                + "\nAccount Number:"
+                + accountToDisplay.getAccountNum()
+                + "\nCustomer ID: "
+                + accountToDisplay.getCustomerID()
+                + "\nBalance: "
+                + accountToDisplay.getBalance().toString()
+                + "\n\nAccount Type: "
+                + accountToDisplay.getAccountType().getText()
+                + "\nInterest rate: " 
+                + accountToDisplay.getInterestRateInPercentage() + "%"
+                + "\nMax Daily Withdrawal: "
+                + accountToDisplay.getAccountType().getMaxWithdrawalStr() 
+                + "\nOverdraft Limit: "
+                + accountToDisplay.getAccountType().getOverdraftLimit()
+                + "\n");
     }
 
     private void deposit() {
@@ -548,11 +567,8 @@ public class Menu {
         }
 
         displayMenuResultSeparator();
-        System.out.println(ConstantString.SUCESS_VIEW_TRANS_BY_CLIENT.getText()
-                + "\nAccount number: " + accountToShow.getAccountNum()
-                + "\nAccount type: " + accountToShow.getAccountType().getText()
-                + "\nClient name: " + accountToShow.getHolderName()
-                + "\nBalance: " + accountToShow.getBalance().toString());
+        System.out.println(ConstantString.SUCESS_VIEW_ACCOUNT.getText());
+        displayAccountDetails(accountToShow);
     }
 
     private void viewBalance() {
