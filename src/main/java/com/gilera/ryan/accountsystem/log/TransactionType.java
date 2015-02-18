@@ -11,20 +11,28 @@ package com.gilera.ryan.accountsystem.log;
  */
 public enum TransactionType {
 
-    DEPOSIT("Deposit"),
-    VIEW_BALANCE("View Balance"),
-    WITHDRAW("Withdraw"),
-    TRANSFER("Funds Transfer"),
-    PAID_INTEREST("Paid Interest"),
-    PAID_OVERDRAFT_PENALTY("Paid Overdraft Penalty");
+    DEPOSIT("Deposit", "\u001B[34m"),
+    VIEW_BALANCE("View Balance", "\u001B[36m"),
+    WITHDRAW("Withdraw", "\u001B[35m"),
+    TRANSFER("Funds Transfer", "\u001B[33m"),
+    PAID_INTEREST("Paid Interest", "\u001B[32m"),
+    PAID_OVERDRAFT_PENALTY("Paid Overdraft Penalty", "\u001B[31m");
 
     private final String text;
+    private final String colour;
 
-    private TransactionType(String text) {
+    private TransactionType(String text, String colour) {
         this.text = text;
+        this.colour = colour;
     }
 
     public String getText() {
         return text;
     }
+
+    public String getColour() {
+        return colour;
+    }
+    
+    
 }

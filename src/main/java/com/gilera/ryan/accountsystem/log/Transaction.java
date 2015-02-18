@@ -18,8 +18,7 @@ public class Transaction {
     private final Money amount;
     private final Money balance;
 
-    public Transaction(Date logDate, TransactionType 
-            transactionType, Money amountToLog, Money balance) {
+    public Transaction(Date logDate, TransactionType transactionType, Money amountToLog, Money balance) {
         this.dateOfTransaction = logDate;
         this.transactionType = transactionType;
         this.amount = amountToLog;
@@ -33,20 +32,23 @@ public class Transaction {
     public Date getDateOfTransaction() {
         return dateOfTransaction;
     }
-    
+
     @Override
     public String toString() {
+        final String resetColour = "\u001B[0m";
         
+        String transactionTypeWithColour = 
+                this.transactionType.getColour() +
+                "[" + this.transactionType.getText() + "]";
         
-        return "Type: " + this.transactionType.getText()
-                + "   Date: "
-                + this.dateOfTransaction
+        return this.dateOfTransaction
+                + "   "
+                + transactionTypeWithColour
                 + "   Amount: "
                 + this.amount
-                + "   Balance after transaction: "
-                + this.balance;
+                + "   Remaining balance: "
+                + this.balance
+                + resetColour;
     }
-    
-    
 
 }

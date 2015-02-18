@@ -747,7 +747,7 @@ public class Menu {
 
     private void showAccountsHeldByAClient() {
         BaseAccount accountToShow;
-
+        
         accountToShow = processInputForAccountNumber(
                 ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
 
