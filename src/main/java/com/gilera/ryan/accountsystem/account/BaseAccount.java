@@ -146,8 +146,20 @@ public abstract class BaseAccount implements Account {
             return;
         }
 
-        Money amountWithInterest = this.balance.multipliedBy(
+        Money amountWithInterest;
+        
+        // If money is too small to calculate interest amount
+        // set amountWithInterest to zero
+        // Ex. if balance is £ 0.01
+        try {
+            amountWithInterest = this.balance.multipliedBy(
                 this.interestRate);
+        } catch (Exception e) {
+            // Empty money
+            amountWithInterest = new Money();
+        }
+        
+        
 
         this.balance = amountWithInterest.plus(this.balance);
 

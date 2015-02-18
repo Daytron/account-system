@@ -334,8 +334,9 @@ public class Menu {
 
         // Result Message
         displayMenuResultSeparator();
-        System.out.println("Deposit successful."
-                + "\nDetailed Summary:"
+        System.out.println(ConstantString.SUCCESS_DEPOSIT.getText());
+        System.out.println(
+                "\nDetailed Summary:"
                 + "\nAccount number: " + accountToDeposit.getAccountNum()
                 + "\nAmount deposited: " + amountToDeposit.toString()
                 + "\nBalance: " + accountToDeposit.getBalance().toString());
@@ -387,6 +388,11 @@ public class Menu {
 
             displayMenuResultSeparator();
             System.out.println(ConstantString.SUCCESS_WITHDRAWAL.getText());
+            System.out.println(
+                "\nDetailed Summary:"
+                + "\nAccount number: " + accountToWithdraw.getAccountNum()
+                + "\nAmount withdrawn: " + amountToWithdraw.toString()
+                + "\nBalance: " + accountToWithdraw.getBalance().toString());
         } else {
             displayMenuResultSeparator();
             // display overlimit overdraft error message
@@ -495,6 +501,7 @@ public class Menu {
                 
                 for (BaseAccount account : this.listOfAccounts) {
                     if (account.getTransactions().isEmpty()) {
+                        displayMenuResultSeparator();
                         System.out.println("Transaction log for: " 
                         + account.getAccountNum() + " is EMPTY.");
                     } else {
