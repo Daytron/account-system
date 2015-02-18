@@ -5,7 +5,6 @@
  */
 package com.gilera.ryan.accountsystem.ui;
 
-import com.gilera.ryan.accountsystem.account.AccountType;
 import com.gilera.ryan.accountsystem.account.BaseAccount;
 import com.gilera.ryan.accountsystem.account.BusinessAccount;
 import com.gilera.ryan.accountsystem.account.CashInvestmentAccount;
@@ -20,9 +19,12 @@ import com.gilera.ryan.accountsystem.asset.Money;
 import com.gilera.ryan.accountsystem.log.Transaction;
 import com.gilera.ryan.accountsystem.log.TransactionType;
 import com.gilera.ryan.accountsystem.task.ScheduledTask;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Timer;
@@ -36,9 +38,11 @@ public class Menu {
     private final Map<String, Integer> optionsForMainMenu;
     private final Map<String, Integer> optionsForNewAccountMenu;
     private final Map<String, Integer> optionsForViewTransactionsMenu;
+    private final Map<String, Integer> optionsForTransactionTypesMenu;
     private static final int TOTAL_MAIN_MENU_OPTIONS = 10;
-    private static final int TOTAL_NEW_ACCOUNT_OPTIONS = 10;
+    private static final int TOTAL_ACCOUNT_OPTIONS = 10;
     private static final int TOTAL_VIEW_TRANSACTIONS_OPTIONS = 5;
+    private static final int TOTAL_TRANSACTION_TYPE_OPTIONS = 7;
     private static final long INITIAL_ACCOUNT_NUMBER = 1000000;
     private static final long INITIAL_CLIENT_ID = 0;
 
@@ -51,25 +55,39 @@ public class Menu {
     private Menu() {
         this.optionsForMainMenu = new HashMap<>();
         // Populate options from 0 to (TOTAL_MAIN_MENU_OPTIONS - 1)
-        // This is for input verification later on in the menu selection
+        // This is for main menu options
+        // For input verification purposes later on in the menu selection
         for (int i = 0; i < TOTAL_MAIN_MENU_OPTIONS; i++) {
             this.optionsForMainMenu.put(Integer.toString(i), i);
         }
 
         // Populate options from 1 to TOTAL_ACCOUNT_TYPES
-        // This is for input verification later on in the menu selection
+        // This is new account creation menu
+        // For input verification purposes later on in the menu selection
         this.optionsForNewAccountMenu = new HashMap<>();
-        for (int i = 0; i < TOTAL_NEW_ACCOUNT_OPTIONS; i++) {
+        for (int i = 0; i < TOTAL_ACCOUNT_OPTIONS; i++) {
             this.optionsForNewAccountMenu.put(Integer.toString(i), i);
         }
 
+        // Populate options from 1 to TOTAL_VIEW_TRANSACTIONS_OPTIONS
+        // This is for sub menu options on viewing transaction logs
+        // For input verification purposes later on in the menu selection
         this.optionsForViewTransactionsMenu = new HashMap<>();
         for (int i = 0; i < TOTAL_VIEW_TRANSACTIONS_OPTIONS; i++) {
             this.optionsForViewTransactionsMenu.put(Integer.toString(i), i);
         }
 
+        // Populate options from 1 to TOTAL_VIEW_TRANSACTIONS_OPTIONS
+        // This is for sub menu options on viewing transaction logs
+        // For input verification purposes later on in the menu selection
+        this.optionsForTransactionTypesMenu = new HashMap<>();
+        for (int i = 0; i < TOTAL_TRANSACTION_TYPE_OPTIONS; i++) {
+            this.optionsForTransactionTypesMenu.put(Integer.toString(i), i);
+        }
+
         this.input = new Scanner(System.in);
         this.listOfAccounts = new ArrayList<>();
+
         // Fix at 7 digits
         // Starts at +1
         this.newReadyAccountNumberToUse = INITIAL_ACCOUNT_NUMBER;
@@ -262,9 +280,9 @@ public class Menu {
                 break;
 
             case 9:
-                InternationalAccount internationalAccount = 
-                        new InternationalAccount(
-                        clientName, newReadyAccountNumberToUse, clientID);
+                InternationalAccount internationalAccount
+                        = new InternationalAccount(
+                                clientName, newReadyAccountNumberToUse, clientID);
                 listOfAccounts.add(internationalAccount);
                 displayResultForNewAccountCreation(internationalAccount);
                 break;
@@ -284,7 +302,7 @@ public class Menu {
         displayAccountDetails(account);
 
     }
-    
+
     private void displayAccountDetails(BaseAccount accountToDisplay) {
         System.out.println(
                 "\nDetailed summary:\n"
@@ -298,10 +316,10 @@ public class Menu {
                 + accountToDisplay.getBalance().toString()
                 + "\n\nAccount Type: "
                 + accountToDisplay.getAccountType().getText()
-                + "\nInterest rate: " 
+                + "\nInterest rate: "
                 + accountToDisplay.getInterestRateInPercentage() + "%"
                 + "\nMax Daily Withdrawal: "
-                + accountToDisplay.getAccountType().getMaxWithdrawalStr() 
+                + accountToDisplay.getAccountType().getMaxWithdrawalStr()
                 + "\nOverdraft Limit: "
                 + accountToDisplay.getAccountType().getOverdraftLimit()
                 + "\n");
@@ -389,10 +407,10 @@ public class Menu {
             displayMenuResultSeparator();
             System.out.println(ConstantString.SUCCESS_WITHDRAWAL.getText());
             System.out.println(
-                "\nDetailed Summary:"
-                + "\nAccount number: " + accountToWithdraw.getAccountNum()
-                + "\nAmount withdrawn: " + amountToWithdraw.toString()
-                + "\nBalance: " + accountToWithdraw.getBalance().toString());
+                    "\nDetailed Summary:"
+                    + "\nAccount number: " + accountToWithdraw.getAccountNum()
+                    + "\nAmount withdrawn: " + amountToWithdraw.toString()
+                    + "\nBalance: " + accountToWithdraw.getBalance().toString());
         } else {
             displayMenuResultSeparator();
             // display overlimit overdraft error message
@@ -431,16 +449,15 @@ public class Menu {
             return;
         }
 
-        
         // Condition if ((balance - amountToTransfer) >= limit)
         Money newPotentialBalance = accountFrom.getBalance().minus(amountToTransfer);
         // Allows to transfer money as long the accountFrom has a balance of less than
         // or equal to the accountFrom overdraft limit
         if (newPotentialBalance.isGreaterThanOrEqualTo(
-            accountFrom.getAccountType().getOverdraftLimit())) {
+                accountFrom.getAccountType().getOverdraftLimit())) {
             accountFrom.withdraw(amountToTransfer);
             accountFrom.addTransaction(new Date(),
-                    TransactionType.TRANSFER, amountToTransfer, 
+                    TransactionType.TRANSFER, amountToTransfer,
                     accountFrom.getBalance());
 
             accountTo.deposit(amountToTransfer);
@@ -481,7 +498,7 @@ public class Menu {
         // Get user option
         int userOptionResponse = processInputForMenuOptions(
                 this.optionsForViewTransactionsMenu);
-        
+
         if (this.listOfAccounts.isEmpty()) {
             displayMenuResultSeparator();
             System.out.println(ConstantString.ERROR_ALL_TRANSACTIONS_EMPTY.getText());
@@ -492,18 +509,18 @@ public class Menu {
             case 0:
                 displayMenuResultSeparator();
                 System.out.println(
-                    ConstantString.CANCEL_VIEW_TRANSACTIONS.getText());
+                        ConstantString.CANCEL_VIEW_TRANSACTIONS.getText());
                 break;
-                
+
             case 1:
                 displayMenuResultSeparator();
                 System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_ALL.getText());
-                
+
                 for (BaseAccount account : this.listOfAccounts) {
                     if (account.getTransactions().isEmpty()) {
                         displayMenuResultSeparator();
-                        System.out.println("Transaction log for: " 
-                        + account.getAccountNum() + " is EMPTY.");
+                        System.out.println("Transaction log for: "
+                                + account.getAccountNum() + " is EMPTY.");
                     } else {
                         displayResultForViewTransactionsSingle(account);
                         for (Transaction aTransaction : account.getTransactions()) {
@@ -530,16 +547,175 @@ public class Menu {
 
                 // Display transactions
                 displayResultForViewTransactionsSingle(accountToViewTransaction);
-                
-                for (Transaction aTransaction : 
-                        accountToViewTransaction.getTransactions()) {
+
+                for (Transaction aTransaction
+                        : accountToViewTransaction.getTransactions()) {
                     System.out.println(aTransaction);
                 }
+                break;
+
+            case 3:
+                accountToViewTransaction = processInputForAccountNumber(
+                        ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
+
+                if (accountToViewTransaction == null) {
+                    return;
+                }
+
+                // Check if account transactions is empty
+                if (accountToViewTransaction.isTransactionsEmpty()) {
+                    System.out.println(
+                            ConstantString.ERROR_TRANSACTION_EMPTY.getText());
+                    return;
+                }
+
+                // Get 1st date
+                Date dateFrom = processInputForDate(
+                        ConstantString.ENTER_TRANSACTION_DATE_TO.getText());
+
+                if (dateFrom == null) {
+                    return;
+                }
+
+                Calendar c = Calendar.getInstance();
+                c.setTime(dateFrom);
+                c.add(Calendar.DATE, -1);  // Less 1 day from dateFrom
+                Date dateFromMinus1Day = c.getTime();
+
+                // Get 2nd date
+                Date dateTo = processInputForDate(
+                        ConstantString.ENTER_TRANSACTION_DATE_FROM.getText());
+
+                if (dateTo == null) {
+                    return;
+                }
+                
+                c.setTime(dateTo);
+                c.add(Calendar.DATE, 1);  // Add 1 day to dateTo
+                Date dateToPlus1Day = c.getTime();
+                
+                // if date 2 is before date 1, cancel operation
+                if (dateTo.before(dateFrom)) {
+                    System.out.println(
+                            ConstantString.ERROR_REVERSED_DATE_RANGE.getText());
+                    return;
+                }
+                
+                // if both dates are the same, cancel operation
+                if (dateTo.equals(dateFrom)) {
+                    System.out.println(
+                        ConstantString.ERROR_BOTH_DATES_SAME.getText());
+                    return;
+                }
+
+                // Display transactions
+                displayResultForViewTransactionsSingle(accountToViewTransaction);
+                boolean isNotEmptyTransaction = false;
+                for (Transaction aTransaction
+                        : accountToViewTransaction.getTransactions()) {
+
+                    if (aTransaction.getDateOfTransaction()
+                            .after(dateFromMinus1Day)
+                            && aTransaction.getDateOfTransaction()
+                            .before(dateToPlus1Day)) {
+                        System.out.println(aTransaction);
+                        isNotEmptyTransaction = true;
+                    }
+
+                }
+
+                // If no transactions found within those dates,
+                // display empty message
+                if (!isNotEmptyTransaction) {
+                    System.out.println(ConstantString
+                            .FAIL_NO_TRANSACTIONS_FOUND_BY_DATES.getText());
+                    System.out.println("Date 1: " + dateFrom);
+                    System.out.println("Date 2: " + dateTo);
+                    System.out.println("Cancelling operation...");
+                }
+                
+                break;
+
+            case 4:
+
+                // Display sub menus
+                System.out.println(ConstantString.MENU_VIEW_TRANSACTION_TYPES.getText());
+
+                // Get user option
+                int userResponse = processInputForMenuOptions(
+                        this.optionsForTransactionTypesMenu);
+
+                // If zero is selected, cancel operation
+                if (userResponse == 0) {
+                    displayMenuResultSeparator();
+                    System.out.println(
+                            ConstantString.CANCEL_VIEW_TRANSACTIONS.getText());
+                    return;
+                }
+
+                accountToViewTransaction = processInputForAccountNumber(
+                        ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
+
+                if (accountToViewTransaction == null) {
+                    return;
+                }
+
+                // Check if account transactions is empty
+                if (accountToViewTransaction.isTransactionsEmpty()) {
+                    System.out.println(
+                            ConstantString.ERROR_TRANSACTION_EMPTY.getText());
+                    return;
+                }
+
+                TransactionType transactionTypeToView = null;
+
+                // Note: Case 0 is already filtered on top in order to skip
+                // early before the system ask for account number (see above)
+                // No default option because user response is carefuly filtered
+                // by processInputForMenuOptions() method
+                switch (userResponse) {
+                    case 1:
+                        transactionTypeToView = TransactionType.DEPOSIT;
+                        break;
+                    case 2:
+                        transactionTypeToView = TransactionType.VIEW_BALANCE;
+                        break;
+                    case 3:
+                        transactionTypeToView = TransactionType.WITHDRAW;
+                        break;
+                    case 4:
+                        transactionTypeToView = TransactionType.TRANSFER;
+                        break;
+                    case 5:
+                        transactionTypeToView = TransactionType.PAID_INTEREST;
+                        break;
+                    case 6:
+                        transactionTypeToView = TransactionType.PAID_OVERDRAFT_PENALTY;
+                        break;
+                }
+
+                // Display transactions
+                displayResultForViewTransactionsSingle(accountToViewTransaction);
+
+                boolean isNotEmpty = false;
+                for (Transaction aTransaction
+                        : accountToViewTransaction.getTransactions()) {
+                    if (aTransaction.getTransactionType() == transactionTypeToView) {
+                        System.out.println(aTransaction);
+                        isNotEmpty = true;
+                    }
+                }
+
+                // If no transactions based on type is found, display fail message
+                if (!isNotEmpty) {
+                    System.out.println(ConstantString.FAIL_NO_TRANSACTIONS_FOUND_BY_TYPE.getText());
+                }
+
                 break;
         }
 
     }
-    
+
     private void displayResultForViewTransactionsSingle(BaseAccount accountToView) {
         displayMenuResultSeparator();
         System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_SINGLE.getText());
@@ -593,7 +769,7 @@ public class Menu {
                 ConstantString.SUCCESS_BALANCE.getText()
                 + accountToViewBalance.getBalance());
         accountToViewBalance.addTransaction(new Date(),
-                TransactionType.VIEW_BALANCE, 
+                TransactionType.VIEW_BALANCE,
                 new Money(),
                 accountToViewBalance.getBalance());
 
@@ -660,6 +836,29 @@ public class Menu {
 
         displayMenuResultSeparator();
         System.out.println(ConstantString.ERROR_MSG_INVALID_MONEY.getText());
+        return null;
+
+    }
+
+    private Date processInputForDate(String messageToUser) {
+        Date date;
+        SimpleDateFormat simpleDateFormat
+                = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+
+        System.out.println(messageToUser);
+        String dateToParse = this.input.nextLine();
+
+        try {
+            date = simpleDateFormat.parse(dateToParse);
+
+            if (date != null) {
+                return date;
+            }
+        } catch (Exception e) {
+        }
+
+        displayMenuResultSeparator();
+        System.out.println(ConstantString.ERROR_INVALID_DATE_INPUT.getText());
         return null;
 
     }

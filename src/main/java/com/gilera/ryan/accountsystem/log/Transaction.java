@@ -26,6 +26,14 @@ public class Transaction {
         this.balance = balance;
     }
 
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public Date getDateOfTransaction() {
+        return dateOfTransaction;
+    }
+    
     @Override
     public String toString() {
         
