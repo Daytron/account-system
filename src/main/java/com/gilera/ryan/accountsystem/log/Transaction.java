@@ -5,7 +5,7 @@
  */
 package com.gilera.ryan.accountsystem.log;
 
-import com.gilera.ryan.accountsystem.asset.Money;
+import com.gilera.ryan.accountsystem.utility.Money;
 import java.util.Date;
 
 /**
@@ -13,6 +13,7 @@ import java.util.Date;
  * @author Ryan Gilera
  */
 public class Transaction {
+
     private final Date dateOfTransaction;
     private final TransactionType transactionType;
     private final Money amount;
@@ -33,14 +34,22 @@ public class Transaction {
         return dateOfTransaction;
     }
 
+    public Money getAmount() {
+        return amount;
+    }
+
+    public Money getBalance() {
+        return balance;
+    }
+
     @Override
     public String toString() {
         final String resetColour = "\u001B[0m";
-        
-        String transactionTypeWithColour = 
-                this.transactionType.getColour() +
-                "[" + this.transactionType.getText() + "]";
-        
+
+        String transactionTypeWithColour
+                = this.transactionType.getColour()
+                + "[" + this.transactionType.getText() + "]";
+
         return this.dateOfTransaction
                 + "   "
                 + transactionTypeWithColour

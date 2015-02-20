@@ -5,7 +5,7 @@
  */
 package com.gilera.ryan.accountsystem.account;
 
-import com.gilera.ryan.accountsystem.asset.Money;
+import com.gilera.ryan.accountsystem.utility.Money;
 
 /**
  *

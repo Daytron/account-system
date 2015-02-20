@@ -11,9 +11,8 @@ package com.gilera.ryan.accountsystem.account;
  */
 public class InternationalAccount extends BaseAccount {
 
-    public InternationalAccount(String accountName, long accountNumber, 
-            long clientID) {
-        super(accountName, accountNumber, AccountType.INTERNATIONAL, clientID, 
+    public InternationalAccount(Client client, String accountNumber) {
+        super(client, accountNumber, AccountType.INTERNATIONAL, 
                 AccountType.INTERNATIONAL.getInterest());
     }
     

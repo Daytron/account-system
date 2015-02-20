@@ -6,7 +6,7 @@
 package com.gilera.ryan.accountsystem.task;
 
 import com.gilera.ryan.accountsystem.account.BaseAccount;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.TimerTask;
 
 /**
@@ -15,9 +15,10 @@ import java.util.TimerTask;
  */
 public class ScheduledTask extends TimerTask {
     private boolean isAccountsSet;
-    private ArrayList<BaseAccount> accounts;
+    private List<BaseAccount> accounts;
     
     // 3 minutes interval
+    // converts to milliseconds
     private static final int INTERVAL_TIME = 3 * 60 * 1000;
 
     private ScheduledTask() {
@@ -28,9 +29,7 @@ public class ScheduledTask extends TimerTask {
         return INTERVAL_TIME;
     }
     
-    
-
-    public void setAccounts(ArrayList<BaseAccount> accounts) {
+    public void setAccounts(List<BaseAccount> accounts) {
         // Can only set accounts once!
         if (!isAccountsSet) {
             this.accounts = accounts;

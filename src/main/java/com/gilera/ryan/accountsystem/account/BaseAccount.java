@@ -5,13 +5,14 @@
  */
 package com.gilera.ryan.accountsystem.account;
 
-import com.gilera.ryan.accountsystem.asset.Money;
-import com.gilera.ryan.accountsystem.asset.Sign;
+import com.gilera.ryan.accountsystem.utility.Money;
+import com.gilera.ryan.accountsystem.utility.Sign;
 import java.util.ArrayList;
 import java.util.Date;
 import com.gilera.ryan.accountsystem.log.Transaction;
 import com.gilera.ryan.accountsystem.log.TransactionType;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -26,40 +27,24 @@ public abstract class BaseAccount implements Account {
     private final List<String> listOfAccountHolders;
     private final List<Transaction> listOfTransactions;
     private final String interestRate;
-    private final long accountNumber;
+    private final String accountNumber;
     private final AccountType accountType;
-    private final long clientID;
+    private final Client client;
 
     //Set up a new account 
-    public BaseAccount(String accountName, long accountNumber,
-            AccountType accountType, long clientID, String interestRate) {
+    public BaseAccount(Client owner, String accountNumber,
+            AccountType accountType, String interestRate) {
         this.listOfAccountHolders = new ArrayList<>();
         this.listOfTransactions = new ArrayList<>();
 
+        this.client = owner;
+        
+        // Initial balance at zero
+        // See Money class for other constructors
         this.balance = new Money();
-
-        // Remove extra spaces in the beginning and at the end
-        accountName = accountName.trim();
-        // Normalise string name to lower case
-        accountName = accountName.toLowerCase();
-        // Converts first letter of each word to capital
-        // ex. "ryan gilera" to "Ryan Gilera"
-        StringBuilder tempNameHolder = new StringBuilder();
-        String[] stringHolderArray = accountName.split(" ");
-        for (String eachWordBeforeSpace : stringHolderArray) {
-            char[] eachWordArray = eachWordBeforeSpace.trim().toCharArray();
-            eachWordArray[0] = Character.toUpperCase(eachWordArray[0]);
-            eachWordBeforeSpace = new String(eachWordArray);
-
-            tempNameHolder.append(eachWordBeforeSpace).append(" ");
-        }
-
-        // Add name to account holders
-        this.listOfAccountHolders.add(tempNameHolder.toString());
         
         this.accountNumber = accountNumber;
         this.accountType = accountType;
-        this.clientID = clientID;
 
         this.interestRate = interestRate;
     }
@@ -71,20 +56,24 @@ public abstract class BaseAccount implements Account {
      this.accountNumber = accountNumber;
      }
      */
-    public String getHolderName() {
-        return listOfAccountHolders.get(0);
+    public String getClientName() {
+        return this.client.getName();
     }
 
-    public long getCustomerID() {
-        return clientID;
+    public UUID getClientID() {
+        return this.client.getId();
     }
 
-    public long getAccountNum() {
-        return accountNumber;
+    public Client getClient() {
+        return this.client;
+    }
+    
+    public String getAccountNum() {
+        return this.accountNumber;
     }
 
     public String getInterestRate() {
-        return interestRate;
+        return this.interestRate;
     }
     
     public String getInterestRateInPercentage() {
@@ -132,11 +121,11 @@ public abstract class BaseAccount implements Account {
 
     @Override
     public Money getBalance() {
-        return balance;
+        return this.balance;
     }
 
     public AccountType getAccountType() {
-        return accountType;
+        return this.accountType;
     }
 
     public void payWithInterest() {
@@ -183,7 +172,7 @@ public abstract class BaseAccount implements Account {
 
     public void addTransaction(Date date, TransactionType transactionType,
             Money amount, Money balance) {
-        listOfTransactions.add(new Transaction(date, transactionType,
+        this.listOfTransactions.add(new Transaction(date, transactionType,
                 amount, balance));
     }
     
@@ -191,7 +180,31 @@ public abstract class BaseAccount implements Account {
         return this.listOfTransactions.isEmpty();
     }
 
-    public ArrayList<Transaction> getTransactions() {
-        return (ArrayList<Transaction>) listOfTransactions;
+    public List<Transaction> getTransactions() {
+        return this.listOfTransactions;
     }
+
+    @Override
+    public String toString() {
+        return "Account summary:\n"
+                + "Client Name: "
+                + getClientName()
+                + "\nAccount Number: "
+                + getAccountNum()
+                + "\nCustomer ID: "
+                + getClientID()
+                + "\nBalance: "
+                + getBalance().toString()
+                + "\n\nAccount Type: "
+                + getAccountType().getText()
+                + "\nInterest rate: "
+                + getInterestRateInPercentage() + "%"
+                + "\nMax Daily Withdrawal: "
+                + getAccountType().getMaxWithdrawalStr()
+                + "\nOverdraft Limit: "
+                + getAccountType().getOverdraftLimit()
+                + "\n";
+    }
+    
+    
 }

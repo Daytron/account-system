@@ -66,7 +66,7 @@ enum ConstantString {
             + " [8] Child Account\n"
             + " [9] International Account\n"
             + " [0] Cancel operation\n"),
-    MENU_VIEW_TRANSACTIONS("Filter results by any of these of options: \n"
+    MENU_VIEW_TRANSACTIONS("Filter results by any of these options: \n"
             + " [1] View all transactions of all accounts\n"
             + " [2] View all transactions for one account\n"
             + " [3] View all transactions by certain date range for one account\n"
@@ -96,7 +96,7 @@ enum ConstantString {
     ERROR_PAY_WITH_INTEREST_EMPTY_LIST("Error! There are no accounts stored."),
     ERROR_ALL_TRANSACTIONS_EMPTY("Error! There are no transactions stored yet."),
     ERROR_TRANSACTION_EMPTY("Error! There is no transactions on this account."),
-    ERROR_INVALID_DATE_INPUT("Error!. Invalid date input. Please follow "
+    ERROR_INVALID_DATE_INPUT("Error! Invalid date input. Please follow "
             + "\"dd-mm-yyyy\" format. This operation has been cancelled."),
     ERROR_REVERSED_DATE_RANGE("Error! 2nd date is before the 1st date. Range "
             + "must be from 1st date to 2nd date. This operation has been cancelled."),
@@ -129,12 +129,18 @@ enum ConstantString {
     SUCCESS_PAY_INTEREST_MANUALLY("Interest has been paid."),
     SUCCESS_DEPOSIT("Account successfully deposited."),
     SUCCESS_WITHDRAWAL("Account successfully withdrawn."),
-    SUCESS_VIEW_ACCOUNT("Account information successfully retrieved."),
+    SUCESS_VIEW_ACCOUNT_BY_NAME("Account(s) found:"),
     SUCCESS_BALANCE("The client account balance is: "),
+    
+    SUCCESS_CLIENT_FOUND_NEW_ACCOUNT("A previous client record found."),
+    CREATE_NEW_CLIENT("Creating new client record instead...\n"
+            + "Client record created.\n"),
+    CREATE_NEW_ACCOUNT_MSG("Creating new account..."),
     
     FAIL_NO_TRANSACTIONS_FOUND_BY_TYPE("Empty. No transaction records found."),
     FAIL_NO_TRANSACTIONS_FOUND_BY_DATES("Empty. No transaction records found "
             + "within these dates: "),
+    FAIL_NO_CLIENT_FOUND("No client record goes by that name."),
     
     END_MESSAGE("Thank you for using automatic banking teller. "
                 + "Have a good day.\n");

@@ -11,9 +11,8 @@ package com.gilera.ryan.accountsystem.account;
  */
 public class CashInvestmentAccount extends BaseAccount {
 
-    public CashInvestmentAccount(String accountName, long accountNumber, 
-            long clientID) {
-        super(accountName, accountNumber, AccountType.CASH_INVESTMENT, clientID, 
+    public CashInvestmentAccount(Client client, String accountNumber) {
+        super(client, accountNumber, AccountType.CASH_INVESTMENT, 
                 AccountType.CASH_INVESTMENT.getInterest());
     }
     

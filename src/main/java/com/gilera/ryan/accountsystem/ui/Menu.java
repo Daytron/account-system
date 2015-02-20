@@ -9,21 +9,24 @@ import com.gilera.ryan.accountsystem.account.BaseAccount;
 import com.gilera.ryan.accountsystem.account.BusinessAccount;
 import com.gilera.ryan.accountsystem.account.CashInvestmentAccount;
 import com.gilera.ryan.accountsystem.account.ChildAccount;
+import com.gilera.ryan.accountsystem.account.Client;
 import com.gilera.ryan.accountsystem.account.CurrentAccount;
 import com.gilera.ryan.accountsystem.account.IRAccount;
 import com.gilera.ryan.accountsystem.account.InternationalAccount;
 import com.gilera.ryan.accountsystem.account.SMBAccount;
 import com.gilera.ryan.accountsystem.account.SavingsAccount;
 import com.gilera.ryan.accountsystem.account.StudentAccount;
-import com.gilera.ryan.accountsystem.asset.Money;
+import com.gilera.ryan.accountsystem.utility.Money;
 import com.gilera.ryan.accountsystem.log.Transaction;
 import com.gilera.ryan.accountsystem.log.TransactionType;
 import com.gilera.ryan.accountsystem.task.ScheduledTask;
+import com.gilera.ryan.accountsystem.utility.StringUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
@@ -39,17 +42,16 @@ public class Menu {
     private final Map<String, Integer> optionsForNewAccountMenu;
     private final Map<String, Integer> optionsForViewTransactionsMenu;
     private final Map<String, Integer> optionsForTransactionTypesMenu;
+    
     private static final int TOTAL_MAIN_MENU_OPTIONS = 10;
     private static final int TOTAL_ACCOUNT_OPTIONS = 10;
     private static final int TOTAL_VIEW_TRANSACTIONS_OPTIONS = 5;
     private static final int TOTAL_TRANSACTION_TYPE_OPTIONS = 7;
     private static final long INITIAL_ACCOUNT_NUMBER = 1000000;
-    private static final long INITIAL_CLIENT_ID = 0;
 
     private final Scanner input;
-    private final ArrayList<BaseAccount> listOfAccounts;
-    private long newReadyAccountNumberToUse;
-    private long newReadyClientIDToUse;
+    private final List<BaseAccount> listOfAccounts;
+    private long accountNumberCounter;
     private final ScheduledTask scheduledTask;
 
     private Menu() {
@@ -90,11 +92,12 @@ public class Menu {
 
         // Fix at 7 digits
         // Starts at +1
-        this.newReadyAccountNumberToUse = INITIAL_ACCOUNT_NUMBER;
-        // Starts at +1
-        this.newReadyClientIDToUse = INITIAL_CLIENT_ID;
+        this.accountNumberCounter = INITIAL_ACCOUNT_NUMBER;
 
+        // Get the single and only instance of ScheduleTask class
         this.scheduledTask = ScheduledTask.getInstance();
+
+        // Inject or pass the listOfAccounts to the instance
         this.scheduledTask.setAccounts(listOfAccounts);
 
         Timer updateEvery3Minutes = new Timer(true);
@@ -114,7 +117,7 @@ public class Menu {
         // Display title
         System.out.println(ConstantString.WELCOME_TITLE.getText());
         System.out.println(ConstantString.WELCOME_MESSAGE.getText());
-        
+
         while (!isFinish) {
 
             displayMenuSeparator();
@@ -178,7 +181,7 @@ public class Menu {
             }
 
             if (!isPressEnterKeySkip) {
-                pressAnyKeyToContinue();
+                pressEnterKeyToContinue();
             }
 
         }
@@ -188,7 +191,7 @@ public class Menu {
 
     }
 
-    private void pressAnyKeyToContinue() {
+    private void pressEnterKeyToContinue() {
         System.out.println("\nPress Enter to continue...");
         input.nextLine();
     }
@@ -203,7 +206,6 @@ public class Menu {
 
     private void createNewAccount() {
         String clientName;
-        long clientID;
 
         // Display new account options
         System.out.println(ConstantString.MENU_NEW_ACCOUNTS.getText());
@@ -217,68 +219,80 @@ public class Menu {
         }
 
         // Get client full name
-        clientName = processInputForCustomerName(
+        clientName = processInputForClientName(
                 ConstantString.ENTER_CLIENT_NAME.getText());
 
         if (clientName == null) {
             return;
         }
 
-        // Update with new client ID
-        this.newReadyClientIDToUse += 1;
-        clientID = this.newReadyClientIDToUse;
+        Client aClient = retrieveClient(clientName);
+
+        // If this is a new client, create new record
+        if (aClient == null) {
+            System.out.println(ConstantString.CREATE_NEW_CLIENT.getText());
+            aClient = new Client(clientName);
+        } else {
+            displayMenuResultSeparator();
+            System.out.println(
+                    ConstantString.SUCCESS_CLIENT_FOUND_NEW_ACCOUNT.getText());
+        }
+        
+        System.out.println(ConstantString.CREATE_NEW_ACCOUNT_MSG.getText());
 
         // Prepare new account number
-        this.newReadyAccountNumberToUse += 1;
+        this.accountNumberCounter += 1;
+        final String newAccountNumber
+                = Long.toString(this.accountNumberCounter);
 
         switch (userOptionResponse) {
             case 1:
                 CurrentAccount currentAccount = new CurrentAccount(
-                        clientName, newReadyAccountNumberToUse, clientID);
+                        aClient, newAccountNumber);
                 listOfAccounts.add(currentAccount);
                 displayResultForNewAccountCreation(currentAccount);
                 break;
             case 2:
                 SavingsAccount savingsAccount = new SavingsAccount(
-                        clientName, newReadyAccountNumberToUse, clientID);
+                        aClient, newAccountNumber);
                 listOfAccounts.add(savingsAccount);
                 displayResultForNewAccountCreation(savingsAccount);
                 break;
             case 3:
                 StudentAccount studentAccount = new StudentAccount(
-                        clientName, newReadyAccountNumberToUse, clientID);
+                        aClient, newAccountNumber);
                 listOfAccounts.add(studentAccount);
                 displayResultForNewAccountCreation(studentAccount);
                 break;
             case 4:
                 BusinessAccount businessAccount = new BusinessAccount(
-                        clientName, newReadyAccountNumberToUse, clientID);
+                        aClient, newAccountNumber);
                 listOfAccounts.add(businessAccount);
                 displayResultForNewAccountCreation(businessAccount);
                 break;
             case 5:
                 SMBAccount sMBAccount = new SMBAccount(
-                        clientName, newReadyAccountNumberToUse, clientID);
+                        aClient, newAccountNumber);
                 listOfAccounts.add(sMBAccount);
                 displayResultForNewAccountCreation(sMBAccount);
                 break;
             case 6:
                 IRAccount iRAccount = new IRAccount(
-                        clientName, newReadyAccountNumberToUse, clientID);
+                        aClient, newAccountNumber);
                 listOfAccounts.add(iRAccount);
                 displayResultForNewAccountCreation(iRAccount);
                 break;
 
             case 7:
                 CashInvestmentAccount cashInvestmentAccount = new CashInvestmentAccount(
-                        clientName, newReadyAccountNumberToUse, clientID);
+                        aClient, newAccountNumber);
                 listOfAccounts.add(cashInvestmentAccount);
                 displayResultForNewAccountCreation(cashInvestmentAccount);
                 break;
 
             case 8:
                 ChildAccount childAccount = new ChildAccount(
-                        clientName, newReadyAccountNumberToUse, clientID);
+                        aClient, newAccountNumber);
                 listOfAccounts.add(childAccount);
                 displayResultForNewAccountCreation(childAccount);
                 break;
@@ -286,7 +300,7 @@ public class Menu {
             case 9:
                 InternationalAccount internationalAccount
                         = new InternationalAccount(
-                                clientName, newReadyAccountNumberToUse, clientID);
+                                aClient, newAccountNumber);
                 listOfAccounts.add(internationalAccount);
                 displayResultForNewAccountCreation(internationalAccount);
                 break;
@@ -303,30 +317,8 @@ public class Menu {
         System.out.println("A "
                 + account.getAccountType().getText().toLowerCase()
                 + " account has been created.");
-        displayAccountDetails(account);
+        System.out.println(account);
 
-    }
-
-    private void displayAccountDetails(BaseAccount accountToDisplay) {
-        System.out.println(
-                "\nDetailed summary:\n"
-                + "Client Name: "
-                + accountToDisplay.getHolderName()
-                + "\nAccount Number: "
-                + accountToDisplay.getAccountNum()
-                + "\nCustomer ID: "
-                + accountToDisplay.getCustomerID()
-                + "\nBalance: "
-                + accountToDisplay.getBalance().toString()
-                + "\n\nAccount Type: "
-                + accountToDisplay.getAccountType().getText()
-                + "\nInterest rate: "
-                + accountToDisplay.getInterestRateInPercentage() + "%"
-                + "\nMax Daily Withdrawal: "
-                + accountToDisplay.getAccountType().getMaxWithdrawalStr()
-                + "\nOverdraft Limit: "
-                + accountToDisplay.getAccountType().getOverdraftLimit()
-                + "\n");
     }
 
     private void deposit() {
@@ -485,7 +477,7 @@ public class Menu {
             return;
         }
 
-        for (BaseAccount account : listOfAccounts) {
+        for (BaseAccount account : this.listOfAccounts) {
             account.payWithInterest();
         }
 
@@ -593,11 +585,11 @@ public class Menu {
                 if (dateTo == null) {
                     return;
                 }
-                
+
                 c.setTime(dateTo);
                 c.add(Calendar.DATE, 1);  // Add 1 day to dateTo
                 Date dateToPlus1Day = c.getTime();
-                
+
                 // if date 2 is before date 1, cancel operation
                 if (dateTo.before(dateFrom)) {
                     displayMenuResultSeparator();
@@ -605,12 +597,12 @@ public class Menu {
                             ConstantString.ERROR_REVERSED_DATE_RANGE.getText());
                     return;
                 }
-                
+
                 // if both dates are the same, cancel operation
                 if (dateTo.equals(dateFrom)) {
                     displayMenuResultSeparator();
                     System.out.println(
-                        ConstantString.ERROR_BOTH_DATES_SAME.getText());
+                            ConstantString.ERROR_BOTH_DATES_SAME.getText());
                     return;
                 }
 
@@ -633,13 +625,12 @@ public class Menu {
                 // If no transactions found within those dates,
                 // display empty message
                 if (!isNotEmptyTransaction) {
-                    System.out.println(ConstantString
-                            .FAIL_NO_TRANSACTIONS_FOUND_BY_DATES.getText());
+                    System.out.println(ConstantString.FAIL_NO_TRANSACTIONS_FOUND_BY_DATES.getText());
                     System.out.println("Date 1: " + dateFrom);
                     System.out.println("Date 2: " + dateTo);
                     System.out.println("Cancelling operation...");
                 }
-                
+
                 break;
 
             case 4:
@@ -725,7 +716,7 @@ public class Menu {
     private void displayResultForViewTransactionsSingle(BaseAccount accountToView) {
         displayMenuResultSeparator();
         System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_SINGLE.getText());
-        System.out.println("Account name: " + accountToView.getHolderName());
+        System.out.println("Account name: " + accountToView.getClientName());
         System.out.println("Account number: " + accountToView.getAccountNum() + "\n");
     }
 
@@ -746,18 +737,46 @@ public class Menu {
     }
 
     private void showAccountsHeldByAClient() {
-        BaseAccount accountToShow;
-        
-        accountToShow = processInputForAccountNumber(
-                ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
+        String clientName = processInputForClientName(
+                ConstantString.ENTER_CLIENT_NAME.getText());
 
-        if (accountToShow == null) {
+        if (clientName == null) {
             return;
         }
 
+        Client client = retrieveClient(clientName);
+
+        if (client == null) {
+            return;
+        } else {
+            displayMenuResultSeparator();
+            System.out.print(ConstantString.SUCESS_VIEW_ACCOUNT_BY_NAME.getText());
+        }
+
+
+        for (BaseAccount account : this.listOfAccounts) {
+            if (account.getClientID().equals(client.getId())) {
+                displayMenuResultSeparator();
+                System.out.println(account);
+            }
+        }
+
+    }
+
+    private Client retrieveClient(String name) {
+        name = StringUtil.formatClientName(name);
+
+        for (BaseAccount account : this.listOfAccounts) {
+            if (account.getClientName().toLowerCase()
+                    .contains(name.toLowerCase())) {
+                return account.getClient();
+            }
+        }
+
         displayMenuResultSeparator();
-        System.out.println(ConstantString.SUCESS_VIEW_ACCOUNT.getText());
-        displayAccountDetails(accountToShow);
+        System.out.println(ConstantString.FAIL_NO_CLIENT_FOUND.getText());
+        return null;
+
     }
 
     private void viewBalance() {
@@ -802,16 +821,15 @@ public class Menu {
     }
 
     private BaseAccount processInputForAccountNumber(String messageToUser) {
-        long accountNumber;
+        String accountNumber;
 
         System.out.println(messageToUser);
 
         try {
-            accountNumber = this.input.nextLong();
-            this.input.nextLine();
+            accountNumber = this.input.nextLine();
 
-            for (BaseAccount anAccount : listOfAccounts) {
-                if (anAccount.getAccountNum() == accountNumber) {
+            for (BaseAccount anAccount : this.listOfAccounts) {
+                if (anAccount.getAccountNum().equals(accountNumber)) {
                     return anAccount;
                 }
             }
@@ -869,13 +887,21 @@ public class Menu {
 
     }
 
-    private String processInputForCustomerName(String instructionMsg) {
+    private String processInputForClientName(String instructionMsg) {
         String clientName;
 
         System.out.println(instructionMsg);
         clientName = this.input.nextLine();
 
+        // \\p{L} find matches for any kind of letter from all types of languages
+        // Allows not only letters but any special character given to a name
+        // like ' and -. Allows spaces in between names
         if (clientName.matches("^[\\p{L} .'-]+$")) {
+            // First it trims extra spaces in the beginning and end
+            // Replaces all 1 or more spaces in between to single space
+            // Ex. "ryan    gilera   " becomes "ryan gilera"
+            clientName = StringUtil.removeExtraSpacesInName(clientName);
+
             return clientName;
         } else {
             displayMenuResultSeparator();

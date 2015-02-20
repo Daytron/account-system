@@ -11,8 +11,8 @@ package com.gilera.ryan.accountsystem.account;
  */
 public class IRAccount extends BaseAccount {
 
-    public IRAccount(String accountOwner, long acc_num, long accountID) {
-        super(accountOwner, acc_num, AccountType.IRA, accountID, 
+    public IRAccount(Client client, String accountNumber) {
+        super(client, accountNumber, AccountType.IRA,
                 AccountType.IRA.getInterest());
     }
 }

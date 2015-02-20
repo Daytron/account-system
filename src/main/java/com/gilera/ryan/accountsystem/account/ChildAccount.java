@@ -11,9 +11,8 @@ package com.gilera.ryan.accountsystem.account;
  */
 public class ChildAccount extends BaseAccount {
 
-    public ChildAccount(String accountName, long accountNumber, 
-            long clientID) {
-        super(accountName, accountNumber, AccountType.CHILD, clientID, 
+    public ChildAccount(Client client, String accountNumber) {
+        super(client, accountNumber, AccountType.CHILD, 
                 AccountType.CHILD.getInterest());
     }
     
