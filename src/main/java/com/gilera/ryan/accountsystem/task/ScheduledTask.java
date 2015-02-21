@@ -32,6 +32,7 @@ public final class ScheduledTask extends TimerTask {
     
     public void setAccounts(List<BaseAccount> accounts) {
         // Can only set accounts once!
+        // Prevents overriding the variable later on
         if (!isAccountsSet) {
             this.accounts = accounts;
             this.isAccountsSet = true;
@@ -46,8 +47,9 @@ public final class ScheduledTask extends TimerTask {
             Iterator<BaseAccount> iterator = accounts.iterator();
             
             while (iterator.hasNext()) {
-                iterator.next().payWithInterest();
-                iterator.next().applyOverdraftPenaltyIfPossible();
+                BaseAccount account = iterator.next();
+                account.payWithInterest();
+                account.applyOverdraftPenaltyIfPossible();
             }
         }
     }

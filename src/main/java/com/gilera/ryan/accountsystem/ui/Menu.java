@@ -520,7 +520,13 @@ public final class Menu {
     }
 
     private void payWithInterest() {
-        if (listOfAccounts.isEmpty()) {
+        boolean isEmpty;
+
+        synchronized (this.listOfAccounts) {
+            isEmpty = this.listOfAccounts.isEmpty();
+        }
+
+        if (isEmpty) {
             System.out.println(
                     ConstantString.ERROR_PAY_WITH_INTEREST_EMPTY_LIST.getText());
             System.out.println(
@@ -550,7 +556,12 @@ public final class Menu {
         int userOptionResponse = processInputForMenuOptions(
                 this.optionsForViewTransactionsMenu);
 
-        if (this.listOfAccounts.isEmpty()) {
+        boolean isEmptyList;
+        synchronized (this.listOfAccounts) {
+            isEmptyList = this.listOfAccounts.isEmpty();
+        }
+
+        if (isEmptyList) {
             displayResultSeparator();
             System.out.println(ConstantString.ERROR_ALL_TRANSACTIONS_EMPTY.getText());
             System.out.println(
