@@ -24,8 +24,10 @@ import com.gilera.ryan.accountsystem.utility.StringUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,18 +38,19 @@ import java.util.Timer;
  *
  * @author Ryan Gilera
  */
-public class Menu {
+public final class Menu {
 
     private final Map<String, Integer> optionsForMainMenu;
     private final Map<String, Integer> optionsForNewAccountMenu;
     private final Map<String, Integer> optionsForViewTransactionsMenu;
     private final Map<String, Integer> optionsForTransactionTypesMenu;
-    
+
     private static final int TOTAL_MAIN_MENU_OPTIONS = 10;
     private static final int TOTAL_ACCOUNT_OPTIONS = 10;
-    private static final int TOTAL_VIEW_TRANSACTIONS_OPTIONS = 5;
+    private static final int TOTAL_VIEW_TRANSACTIONS_OPTIONS = 6;
     private static final int TOTAL_TRANSACTION_TYPE_OPTIONS = 7;
     private static final long INITIAL_ACCOUNT_NUMBER = 1000000;
+    private static final int SEPARATOR_LENGTH = 47;
 
     private final Scanner input;
     private final List<BaseAccount> listOfAccounts;
@@ -88,7 +91,11 @@ public class Menu {
         }
 
         this.input = new Scanner(System.in);
-        this.listOfAccounts = new ArrayList<>();
+
+        // Create a synchronised arraylist
+        // This data structure must be synchronized when access in multi threads
+        this.listOfAccounts = Collections
+                .synchronizedList(new ArrayList<BaseAccount>());
 
         // Fix at 7 digits
         // Starts at +1
@@ -120,7 +127,7 @@ public class Menu {
 
         while (!isFinish) {
 
-            displayMenuSeparator();
+            displayMainSeparator();
             System.out.println(ConstantString.MENU_MAIN.getText());
             userOptionResponse = processInputForMenuOptions(this.optionsForMainMenu);
 
@@ -169,12 +176,12 @@ public class Menu {
 
                 // Exit
                 case 0:
-                    System.out.println(ConstantString.CONFIRM_EXIT_QUESTION.getText());
+                    System.out.print(ConstantString.CONFIRM_EXIT_QUESTION.getText());
                     String response = input.nextLine();
+
                     if (response.equalsIgnoreCase("y")) {
                         isFinish = true;
                         isPressEnterKeySkip = true;
-                        break;
                     }
                     break;
 
@@ -186,22 +193,33 @@ public class Menu {
 
         }
 
-        displayMenuSeparator();
+        // Closing message
+        displayMainSeparator();
         System.out.println(ConstantString.END_MESSAGE.getText());
+        displayMainSeparator();
+        System.out.println("");
 
     }
 
     private void pressEnterKeyToContinue() {
-        System.out.println("\nPress Enter to continue...");
+        System.out.print("\n\nPress Enter to continue...");
         input.nextLine();
     }
 
-    private void displayMenuSeparator() {
-        System.out.println(ConstantString.MENU_SEPARATOR_MAIN.getText());
+    private void displayMainSeparator() {
+        System.out.println("");
+        for (int i = 0; i < SEPARATOR_LENGTH; i++) {
+            System.out.print(ConstantString.MENU_SEPARATOR_MAIN.getText());
+        }
+        System.out.println("");
     }
 
-    private void displayMenuResultSeparator() {
-        System.out.println(ConstantString.MENU_SEPARATOR_RESULT.getText());
+    private void displayResultSeparator() {
+        System.out.println("");
+        for (int i = 0; i < SEPARATOR_LENGTH; i++) {
+            System.out.print(ConstantString.MENU_SEPARATOR_RESULT.getText());
+        }
+        System.out.println("");
     }
 
     private void createNewAccount() {
@@ -214,7 +232,7 @@ public class Menu {
 
         if (userOptionResponse == 0) {
             System.out.println(
-                    ConstantString.CANCEL_NEW_ACCOUNT.getText());
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
             return;
         }
 
@@ -233,11 +251,11 @@ public class Menu {
             System.out.println(ConstantString.CREATE_NEW_CLIENT.getText());
             aClient = new Client(clientName);
         } else {
-            displayMenuResultSeparator();
+            displayResultSeparator();
             System.out.println(
-                    ConstantString.SUCCESS_CLIENT_FOUND_NEW_ACCOUNT.getText());
+                    ConstantString.SUCCESS_CLIENT_FOUND.getText());
         }
-        
+
         System.out.println(ConstantString.CREATE_NEW_ACCOUNT_MSG.getText());
 
         // Prepare new account number
@@ -249,51 +267,67 @@ public class Menu {
             case 1:
                 CurrentAccount currentAccount = new CurrentAccount(
                         aClient, newAccountNumber);
-                listOfAccounts.add(currentAccount);
+                synchronized (this.listOfAccounts) {
+                    this.listOfAccounts.add(currentAccount);
+                }
                 displayResultForNewAccountCreation(currentAccount);
                 break;
             case 2:
                 SavingsAccount savingsAccount = new SavingsAccount(
                         aClient, newAccountNumber);
-                listOfAccounts.add(savingsAccount);
+                synchronized (this.listOfAccounts) {
+                    this.listOfAccounts.add(savingsAccount);
+                }
                 displayResultForNewAccountCreation(savingsAccount);
                 break;
             case 3:
                 StudentAccount studentAccount = new StudentAccount(
                         aClient, newAccountNumber);
-                listOfAccounts.add(studentAccount);
+                synchronized (this.listOfAccounts) {
+                    this.listOfAccounts.add(studentAccount);
+                }
                 displayResultForNewAccountCreation(studentAccount);
                 break;
             case 4:
                 BusinessAccount businessAccount = new BusinessAccount(
                         aClient, newAccountNumber);
-                listOfAccounts.add(businessAccount);
+                synchronized (this.listOfAccounts) {
+                    this.listOfAccounts.add(businessAccount);
+                }
                 displayResultForNewAccountCreation(businessAccount);
                 break;
             case 5:
                 SMBAccount sMBAccount = new SMBAccount(
                         aClient, newAccountNumber);
-                listOfAccounts.add(sMBAccount);
+                synchronized (this.listOfAccounts) {
+                    this.listOfAccounts.add(sMBAccount);
+                }
                 displayResultForNewAccountCreation(sMBAccount);
                 break;
             case 6:
                 IRAccount iRAccount = new IRAccount(
                         aClient, newAccountNumber);
-                listOfAccounts.add(iRAccount);
+                synchronized (this.listOfAccounts) {
+                    this.listOfAccounts.add(iRAccount);
+                }
                 displayResultForNewAccountCreation(iRAccount);
                 break;
 
             case 7:
                 CashInvestmentAccount cashInvestmentAccount = new CashInvestmentAccount(
                         aClient, newAccountNumber);
-                listOfAccounts.add(cashInvestmentAccount);
+                synchronized (this.listOfAccounts) {
+                    this.listOfAccounts.add(cashInvestmentAccount);
+                }
                 displayResultForNewAccountCreation(cashInvestmentAccount);
                 break;
 
             case 8:
                 ChildAccount childAccount = new ChildAccount(
                         aClient, newAccountNumber);
-                listOfAccounts.add(childAccount);
+                synchronized (this.listOfAccounts) {
+                    this.listOfAccounts.add(childAccount);
+                }
                 displayResultForNewAccountCreation(childAccount);
                 break;
 
@@ -301,7 +335,9 @@ public class Menu {
                 InternationalAccount internationalAccount
                         = new InternationalAccount(
                                 aClient, newAccountNumber);
-                listOfAccounts.add(internationalAccount);
+                synchronized (this.listOfAccounts) {
+                    this.listOfAccounts.add(internationalAccount);
+                }
                 displayResultForNewAccountCreation(internationalAccount);
                 break;
 
@@ -312,11 +348,9 @@ public class Menu {
     }
 
     private void displayResultForNewAccountCreation(BaseAccount account) {
-        displayMenuResultSeparator();
+        displayResultSeparator();
 
-        System.out.println("A "
-                + account.getAccountType().getText().toLowerCase()
-                + " account has been created.");
+        System.out.println(ConstantString.SUCCESS_ACCOUNT_CREATED.getText());
         System.out.println(account);
 
     }
@@ -347,7 +381,7 @@ public class Menu {
                 accountToDeposit.getBalance());
 
         // Result Message
-        displayMenuResultSeparator();
+        displayResultSeparator();
         System.out.println(ConstantString.SUCCESS_DEPOSIT.getText());
         System.out.println(
                 "\nDetailed Summary:"
@@ -380,13 +414,15 @@ public class Menu {
         // Check if amount has reached max amount per withdrawal
         if (amountToWithdraw.isGreaterThan(
                 accountToWithdraw.getAccountType().getMaxWithdrawal())) {
-            displayMenuResultSeparator();
+            displayResultSeparator();
             // Error message for overlimit withdrawals
             System.out.println(ConstantString.ERROR_OVERLIMIT_MAX_WITHDRAW_PART1.getText()
                     + accountToWithdraw.getAccountType().getText().toLowerCase()
                     + ConstantString.ERROR_OVERLIMIT_MAX_WITHDRAW_PART2.getText()
                     + accountToWithdraw.getAccountType().getMaxWithdrawalStr()
-                    + ConstantString.ERROR_OVERLIMIT_MAX_WITHDRAW_PART3.getText());
+                    + ".");
+            System.out.println(
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
             return;
         }
 
@@ -400,7 +436,7 @@ public class Menu {
                     TransactionType.WITHDRAW, amountToWithdraw,
                     accountToWithdraw.getBalance());
 
-            displayMenuResultSeparator();
+            displayResultSeparator();
             System.out.println(ConstantString.SUCCESS_WITHDRAWAL.getText());
             System.out.println(
                     "\nDetailed Summary:"
@@ -408,11 +444,12 @@ public class Menu {
                     + "\nAmount withdrawn: " + amountToWithdraw.toString()
                     + "\nBalance: " + accountToWithdraw.getBalance().toString());
         } else {
-            displayMenuResultSeparator();
+            displayResultSeparator();
             // display overlimit overdraft error message
             System.out.println(
                     ConstantString.ERROR_OVERLIMIT_OVERDRAFT_WITHDRAWAL.getText());
-
+            System.out.println(
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
         }
 
     }
@@ -434,6 +471,16 @@ public class Menu {
                 ConstantString.ENTER_TRANSFER_ACCOUNT_TO.getText());
 
         if (accountTo == null) {
+            return;
+        }
+
+        // Cancel operation if the latter account is the same with the 
+        // initial account
+        if (accountFrom.getAccountNum().equalsIgnoreCase(
+                accountTo.getAccountNum())) {
+            displayResultSeparator();
+            System.out.println(
+                    ConstantString.ERROR_SAME_ACCOUNT_TRANSFER.getText());
             return;
         }
 
@@ -461,11 +508,13 @@ public class Menu {
                     TransactionType.TRANSFER, amountToTransfer,
                     accountTo.getBalance());
         } else {
-            System.out.println(ConstantString.ERROR_MSG_INSUFFICIENT_AMOUNT_TO_TRANSFER.getText());
+            System.out.println(ConstantString.ERROR_INSUFFICIENT_AMOUNT_TO_TRANSFER.getText());
+            System.out.println(
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
             return;
         }
 
-        displayMenuResultSeparator();
+        displayResultSeparator();
         System.out.println(ConstantString.SUCCESS_TRANSFER.getText());
 
     }
@@ -474,14 +523,20 @@ public class Menu {
         if (listOfAccounts.isEmpty()) {
             System.out.println(
                     ConstantString.ERROR_PAY_WITH_INTEREST_EMPTY_LIST.getText());
+            System.out.println(
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
             return;
         }
 
-        for (BaseAccount account : this.listOfAccounts) {
-            account.payWithInterest();
+        synchronized (this.listOfAccounts) {
+            Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
+
+            while (iterator.hasNext()) {
+                iterator.next().payWithInterest();
+            }
         }
 
-        displayMenuResultSeparator();
+        displayResultSeparator();
         System.out.println(ConstantString.SUCCESS_PAY_INTEREST_MANUALLY.getText());
     }
 
@@ -496,34 +551,32 @@ public class Menu {
                 this.optionsForViewTransactionsMenu);
 
         if (this.listOfAccounts.isEmpty()) {
-            displayMenuResultSeparator();
+            displayResultSeparator();
             System.out.println(ConstantString.ERROR_ALL_TRANSACTIONS_EMPTY.getText());
+            System.out.println(
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
             return;
         }
 
         switch (userOptionResponse) {
             case 0:
-                displayMenuResultSeparator();
+                displayResultSeparator();
                 System.out.println(
-                        ConstantString.CANCEL_VIEW_TRANSACTIONS.getText());
+                        ConstantString.ERROR_OPERATION_CANCELLED.getText());
                 break;
 
             case 1:
-                displayMenuResultSeparator();
+                displayResultSeparator();
                 System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_ALL.getText());
 
-                for (BaseAccount account : this.listOfAccounts) {
-                    if (account.getTransactions().isEmpty()) {
-                        displayMenuResultSeparator();
-                        System.out.println("Transaction log for: "
-                                + account.getAccountNum() + " is EMPTY.");
-                    } else {
-                        displayResultForViewTransactionsSingle(account);
-                        for (Transaction aTransaction : account.getTransactions()) {
-                            System.out.println(aTransaction);
-                        }
+                synchronized (this.listOfAccounts) {
+                    Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
+
+                    while (iterator.hasNext()) {
+                        displayTransactionsForAnAccount(iterator.next());
                     }
                 }
+
                 break;
 
             case 2:
@@ -534,20 +587,8 @@ public class Menu {
                     return;
                 }
 
-                // Check if account transactions is empty
-                if (accountToViewTransaction.isTransactionsEmpty()) {
-                    System.out.println(
-                            ConstantString.ERROR_TRANSACTION_EMPTY.getText());
-                    return;
-                }
+                displayTransactionsForAnAccount(accountToViewTransaction);
 
-                // Display transactions
-                displayResultForViewTransactionsSingle(accountToViewTransaction);
-
-                for (Transaction aTransaction
-                        : accountToViewTransaction.getTransactions()) {
-                    System.out.println(aTransaction);
-                }
                 break;
 
             case 3:
@@ -560,6 +601,8 @@ public class Menu {
 
                 // Check if account transactions is empty
                 if (accountToViewTransaction.isTransactionsEmpty()) {
+                    System.out.println(
+                            ConstantString.ERROR.getText());
                     System.out.println(
                             ConstantString.ERROR_TRANSACTION_EMPTY.getText());
                     return;
@@ -592,22 +635,26 @@ public class Menu {
 
                 // if date 2 is before date 1, cancel operation
                 if (dateTo.before(dateFrom)) {
-                    displayMenuResultSeparator();
+                    displayResultSeparator();
                     System.out.println(
                             ConstantString.ERROR_REVERSED_DATE_RANGE.getText());
+                    System.out.println(
+                            ConstantString.ERROR_OPERATION_CANCELLED.getText());
                     return;
                 }
 
                 // if both dates are the same, cancel operation
                 if (dateTo.equals(dateFrom)) {
-                    displayMenuResultSeparator();
+                    displayResultSeparator();
                     System.out.println(
                             ConstantString.ERROR_BOTH_DATES_SAME.getText());
+                    System.out.println(
+                            ConstantString.ERROR_OPERATION_CANCELLED.getText());
                     return;
                 }
 
                 // Display transactions
-                displayResultForViewTransactionsSingle(accountToViewTransaction);
+                displayResultTransactionsSingle(accountToViewTransaction);
                 boolean isNotEmptyTransaction = false;
                 for (Transaction aTransaction
                         : accountToViewTransaction.getTransactions()) {
@@ -644,9 +691,9 @@ public class Menu {
 
                 // If zero is selected, cancel operation
                 if (userResponse == 0) {
-                    displayMenuResultSeparator();
+                    displayResultSeparator();
                     System.out.println(
-                            ConstantString.CANCEL_VIEW_TRANSACTIONS.getText());
+                            ConstantString.ERROR_OPERATION_CANCELLED.getText());
                     return;
                 }
 
@@ -659,8 +706,11 @@ public class Menu {
 
                 // Check if account transactions is empty
                 if (accountToViewTransaction.isTransactionsEmpty()) {
+                    System.out.print(ConstantString.ERROR.getText());
                     System.out.println(
                             ConstantString.ERROR_TRANSACTION_EMPTY.getText());
+                    System.out.println(
+                            ConstantString.ERROR_OPERATION_CANCELLED.getText());
                     return;
                 }
 
@@ -692,7 +742,7 @@ public class Menu {
                 }
 
                 // Display transactions
-                displayResultForViewTransactionsSingle(accountToViewTransaction);
+                displayResultTransactionsSingle(accountToViewTransaction);
 
                 boolean isNotEmpty = false;
                 for (Transaction aTransaction
@@ -709,12 +759,55 @@ public class Menu {
                 }
 
                 break;
+
+            case 5:
+                String clientName = processInputForClientName(
+                        ConstantString.ENTER_CLIENT_NAME.getText());
+
+                if (clientName == null) {
+                    return;
+                }
+
+                Client client = retrieveClient(clientName);
+
+                if (client == null) {
+                    return;
+                } else {
+                    displayResultSeparator();
+                    System.out.println(ConstantString.SUCCESS_CLIENT_FOUND.getText());
+                }
+
+                synchronized (this.listOfAccounts) {
+                    Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
+
+                    while (iterator.hasNext()) {
+                        BaseAccount account = iterator.next();
+                        if (account.getClientID().equals(client.getId())) {
+                            displayTransactionsForAnAccount(account);
+                        }
+                    }
+                }
+
+                break;
         }
 
     }
 
-    private void displayResultForViewTransactionsSingle(BaseAccount accountToView) {
-        displayMenuResultSeparator();
+    private void displayTransactionsForAnAccount(BaseAccount accountToView) {
+        displayResultTransactionsSingle(accountToView);
+
+        if (accountToView.getTransactions().isEmpty()) {
+            System.out.println(
+                    ConstantString.ERROR_TRANSACTION_EMPTY.getText());
+        } else {
+            for (Transaction aTransaction : accountToView.getTransactions()) {
+                System.out.println(aTransaction);
+            }
+        }
+    }
+
+    private void displayResultTransactionsSingle(BaseAccount accountToView) {
+        displayResultSeparator();
         System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_SINGLE.getText());
         System.out.println("Account name: " + accountToView.getClientName());
         System.out.println("Account number: " + accountToView.getAccountNum() + "\n");
@@ -749,15 +842,20 @@ public class Menu {
         if (client == null) {
             return;
         } else {
-            displayMenuResultSeparator();
+            displayResultSeparator();
             System.out.print(ConstantString.SUCESS_VIEW_ACCOUNT_BY_NAME.getText());
         }
 
+        synchronized (this.listOfAccounts) {
+            Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
 
-        for (BaseAccount account : this.listOfAccounts) {
-            if (account.getClientID().equals(client.getId())) {
-                displayMenuResultSeparator();
-                System.out.println(account);
+            while (iterator.hasNext()) {
+                BaseAccount account = iterator.next();
+
+                if (account.getClientID().equals(client.getId())) {
+                    displayResultSeparator();
+                    System.out.println(account);
+                }
             }
         }
 
@@ -766,15 +864,22 @@ public class Menu {
     private Client retrieveClient(String name) {
         name = StringUtil.formatClientName(name);
 
-        for (BaseAccount account : this.listOfAccounts) {
-            if (account.getClientName().toLowerCase()
-                    .contains(name.toLowerCase())) {
-                return account.getClient();
+        synchronized (this.listOfAccounts) {
+            Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
+
+            while (iterator.hasNext()) {
+                BaseAccount account = iterator.next();
+                if (account.getClientName().toLowerCase()
+                        .equalsIgnoreCase(name.toLowerCase())) {
+                    return account.getClient();
+                }
             }
         }
 
-        displayMenuResultSeparator();
-        System.out.println(ConstantString.FAIL_NO_CLIENT_FOUND.getText());
+        displayResultSeparator();
+        System.out.println(ConstantString.ERROR_NO_CLIENT_FOUND.getText());
+        System.out.println(
+                ConstantString.ERROR_OPERATION_CANCELLED.getText());
         return null;
 
     }
@@ -789,7 +894,7 @@ public class Menu {
             return;
         }
 
-        displayMenuResultSeparator();
+        displayResultSeparator();
         System.out.println(
                 ConstantString.SUCCESS_BALANCE.getText()
                 + accountToViewBalance.getBalance());
@@ -805,40 +910,48 @@ public class Menu {
         Integer userOptionResponse;
 
         while (true) {
-            System.out.println(ConstantString.ENTER_OPTION.getText());
+            System.out.print(ConstantString.ENTER_OPTION.getText()
+                    + (listOfOptions.size() - 1) + "]: ");
             optionString = this.input.nextLine();
 
             userOptionResponse = listOfOptions.get(optionString);
             if (userOptionResponse != null) {
                 break;
             } else {
-                displayMenuResultSeparator();
-                System.out.println(ConstantString.ERROR_MSG_INVALID_OPTION.getText());
+                displayResultSeparator();
+                System.out.println(ConstantString.ERROR_INVALID_OPTION.getText());
             }
         }
-
         return userOptionResponse;
     }
 
     private BaseAccount processInputForAccountNumber(String messageToUser) {
         String accountNumber;
 
-        System.out.println(messageToUser);
+        System.out.print(messageToUser);
 
         try {
             accountNumber = this.input.nextLine();
 
-            for (BaseAccount anAccount : this.listOfAccounts) {
-                if (anAccount.getAccountNum().equals(accountNumber)) {
-                    return anAccount;
+            synchronized (this.listOfAccounts) {
+                Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
+
+                while (iterator.hasNext()) {
+                    BaseAccount account = iterator.next();
+
+                    if (account.getAccountNum().equals(accountNumber)) {
+                        return account;
+                    }
                 }
             }
 
         } catch (Exception ex) {
         }
 
-        displayMenuResultSeparator();
-        System.out.println(ConstantString.ERROR_MSG_ACCOUNT_NUMBER.getText());
+        displayResultSeparator();
+        System.out.println(ConstantString.ERROR_INVALID_ACCOUNT_NUMBER.getText());
+        System.out.println(
+                ConstantString.ERROR_OPERATION_CANCELLED.getText());
         return null;
 
     }
@@ -846,7 +959,7 @@ public class Menu {
     private Money processInputForMoney(String messageToUser) {
         Money amountGiven;
 
-        System.out.println(messageToUser);
+        System.out.print(messageToUser);
         String amountGivenStr = this.input.nextLine();
 
         try {
@@ -858,8 +971,10 @@ public class Menu {
         } catch (Exception e) {
         }
 
-        displayMenuResultSeparator();
-        System.out.println(ConstantString.ERROR_MSG_INVALID_MONEY.getText());
+        displayResultSeparator();
+        System.out.println(ConstantString.ERROR_INVALID_MONEY.getText());
+        System.out.println(
+                ConstantString.ERROR_OPERATION_CANCELLED.getText());
         return null;
 
     }
@@ -869,7 +984,7 @@ public class Menu {
         SimpleDateFormat simpleDateFormat
                 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-        System.out.println(messageToUser);
+        System.out.print(messageToUser);
         String dateToParse = this.input.nextLine();
 
         try {
@@ -881,8 +996,10 @@ public class Menu {
         } catch (Exception e) {
         }
 
-        displayMenuResultSeparator();
+        displayResultSeparator();
         System.out.println(ConstantString.ERROR_INVALID_DATE_INPUT.getText());
+        System.out.println(
+                ConstantString.ERROR_OPERATION_CANCELLED.getText());
         return null;
 
     }
@@ -890,7 +1007,7 @@ public class Menu {
     private String processInputForClientName(String instructionMsg) {
         String clientName;
 
-        System.out.println(instructionMsg);
+        System.out.print(instructionMsg);
         clientName = this.input.nextLine();
 
         // \\p{L} find matches for any kind of letter from all types of languages
@@ -904,8 +1021,10 @@ public class Menu {
 
             return clientName;
         } else {
-            displayMenuResultSeparator();
+            displayResultSeparator();
             System.out.println(ConstantString.ERROR_INVALID_NAME.getText());
+            System.out.println(
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
             return null;
         }
     }

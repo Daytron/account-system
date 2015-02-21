@@ -39,8 +39,8 @@ enum ConstantString {
     WELCOME_MESSAGE("Welcome to the world's advanced account teller system"),
     
     ///// MENU SEPRATORS
-    MENU_SEPARATOR_MAIN("\n###########################"),
-    MENU_SEPARATOR_RESULT("\n-------------------------"),
+    MENU_SEPARATOR_MAIN("="),
+    MENU_SEPARATOR_RESULT("-"),
     
     ///// MENUS
     MENU_MAIN("MAIN MENU\n"
@@ -67,10 +67,11 @@ enum ConstantString {
             + " [9] International Account\n"
             + " [0] Cancel operation\n"),
     MENU_VIEW_TRANSACTIONS("Filter results by any of these options: \n"
-            + " [1] View all transactions of all accounts\n"
-            + " [2] View all transactions for one account\n"
-            + " [3] View all transactions by certain date range for one account\n"
-            + " [4] View all transactions by type for one account\n"
+            + " [1] View transactions of all accounts\n"
+            + " [2] View transactions for one account\n"
+            + " [3] View transactions by certain date range for one account\n"
+            + " [4] View transactions by type for one account\n"
+            + " [5] View transactions by client\n"
             + " [0] Cancel operation\n"),
     MENU_VIEW_TRANSACTION_TYPES("Filter results by transaction type:\n"
             + " [1] Deposit\n"
@@ -82,37 +83,37 @@ enum ConstantString {
             + " [0] Cancel operation\n"),
     
     ////// ERROR MESSAGES
-    ERROR_MSG_ACCOUNT_NUMBER("Error! Invalid account number entered."),
+    ERROR("Error! "),
+    ERROR_INVALID_ACCOUNT_NUMBER("Error! Invalid account number entered."),
     ERROR_INVALID_NAME("Error! Invalid name entered."),
-    ERROR_MSG_INVALID_OPTION("Error! Invalid option. Please try again."),
-    ERROR_MSG_INVALID_MONEY("Error! Invalid amount entered."),
-    ERROR_MSG_INSUFFICIENT_AMOUNT_TO_TRANSFER("Error! Insufficient funds "
+    ERROR_INVALID_OPTION("Error! Invalid option. Please try again.\n"),
+    ERROR_INVALID_MONEY("Error! Invalid amount entered."),
+    ERROR_INSUFFICIENT_AMOUNT_TO_TRANSFER("Error! Insufficient funds "
             + "to make this transfer."),
     ERROR_OVERLIMIT_MAX_WITHDRAW_PART1("Error! The maximum daily withdrawal for a "),
     ERROR_OVERLIMIT_MAX_WITHDRAW_PART2(" account is "),
-    ERROR_OVERLIMIT_MAX_WITHDRAW_PART3(". This transaction has been cancelled."),
     ERROR_OVERLIMIT_OVERDRAFT_WITHDRAWAL("Error! This account cannot exceed its "
-            + "overdraft limit. This transaction has been cancelled."),
+            + "overdraft limit."),
     ERROR_PAY_WITH_INTEREST_EMPTY_LIST("Error! There are no accounts stored."),
     ERROR_ALL_TRANSACTIONS_EMPTY("Error! There are no transactions stored yet."),
-    ERROR_TRANSACTION_EMPTY("Error! There is no transactions on this account."),
+    ERROR_TRANSACTION_EMPTY("Empty. No transactions found on this account."),
     ERROR_INVALID_DATE_INPUT("Error! Invalid date input. Please follow "
-            + "\"dd-mm-yyyy\" format. This operation has been cancelled."),
+            + "\"dd-mm-yyyy\" format."),
     ERROR_REVERSED_DATE_RANGE("Error! 2nd date is before the 1st date. Range "
-            + "must be from 1st date to 2nd date. This operation has been cancelled."),
-    ERROR_BOTH_DATES_SAME("Error! Both dates are the same. "
-            + "This operation has been cancelled."),
-    
-    ///// CANCEL MESSAGES
-    CANCEL_NEW_ACCOUNT("The account creation has been cancelled. "),
-    CANCEL_VIEW_TRANSACTIONS("The view transaction operation has been cancelled."),
+            + "must be from 1st date to 2nd date."),
+    ERROR_BOTH_DATES_SAME("Error! Both dates are the same. "),
+    ERROR_NO_CLIENT_FOUND("No client record goes by that name."),
+    ERROR_OPERATION_CANCELLED("This operation has been cancelled."),
+    ERROR_SAME_ACCOUNT_TRANSFER("Error! Same bank account.\n"
+            + "Transfer of funds on the same account is not allowed."),
     
     ///// CONFIRMATION MESSAGES
-    CONFIRM_EXIT_QUESTION("Are you sure you want to exit? (y/n):"),
+    CONFIRM_EXIT_QUESTION("Are you sure you want to exit? \n"
+            + "(Enter \"y\" to exit, other keys to cancel): "),
     
     ///// INSTRUCTION MESSAGES
-    ENTER_OPTION("Please enter your option: "),
-    ENTER_CLIENT_NAME("Enter client first and last name"),
+    ENTER_OPTION("Enter your selection [0-"),
+    ENTER_CLIENT_NAME("Enter client first and last name: "),
     ENTER_ACCOUNT_NUM_DEFAULT("Enter account number: "),
     ENTER_DEPOSIT_AMOUNT("Enter amount to deposit: "),
     ENTER_TRANSFER_ACCOUNT_FROM("Enter account Number to transfer money FROM: "),
@@ -131,19 +132,21 @@ enum ConstantString {
     SUCCESS_WITHDRAWAL("Account successfully withdrawn."),
     SUCESS_VIEW_ACCOUNT_BY_NAME("Account(s) found:"),
     SUCCESS_BALANCE("The client account balance is: "),
+    SUCCESS_CLIENT_FOUND("A previous client record found."),
+    SUCCESS_ACCOUNT_CREATED("An account has been created."),
     
-    SUCCESS_CLIENT_FOUND_NEW_ACCOUNT("A previous client record found."),
     CREATE_NEW_CLIENT("Creating new client record instead...\n"
             + "Client record created.\n"),
     CREATE_NEW_ACCOUNT_MSG("Creating new account..."),
     
-    FAIL_NO_TRANSACTIONS_FOUND_BY_TYPE("Empty. No transaction records found."),
+    FAIL_NO_TRANSACTIONS_FOUND_BY_TYPE("Empty. No records found for "
+            + "this transaction type."),
     FAIL_NO_TRANSACTIONS_FOUND_BY_DATES("Empty. No transaction records found "
             + "within these dates: "),
-    FAIL_NO_CLIENT_FOUND("No client record goes by that name."),
     
-    END_MESSAGE("Thank you for using automatic banking teller. "
-                + "Have a good day.\n");
+    
+    END_MESSAGE("Thank you for using automatic banking teller.\n"
+                + "Have a good day.");
     
     private final String text;
     

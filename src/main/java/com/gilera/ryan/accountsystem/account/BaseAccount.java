@@ -202,8 +202,7 @@ public abstract class BaseAccount implements Account {
                 + "\nMax Daily Withdrawal: "
                 + getAccountType().getMaxWithdrawalStr()
                 + "\nOverdraft Limit: "
-                + getAccountType().getOverdraftLimit()
-                + "\n";
+                + getAccountType().getOverdraftLimit();
     }
     
     

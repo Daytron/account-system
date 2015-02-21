@@ -6,6 +6,7 @@
 package com.gilera.ryan.accountsystem.task;
 
 import com.gilera.ryan.accountsystem.account.BaseAccount;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -13,7 +14,7 @@ import java.util.TimerTask;
  *
  * @author Ryan Gilera
  */
-public class ScheduledTask extends TimerTask {
+public final class ScheduledTask extends TimerTask {
     private boolean isAccountsSet;
     private List<BaseAccount> accounts;
     
@@ -39,10 +40,15 @@ public class ScheduledTask extends TimerTask {
 
     @Override
     public void run() {
-        // Do automatic interest
-        for (BaseAccount account : accounts) {
-            account.payWithInterest();
-            account.applyOverdraftPenaltyIfPossible();
+        
+        // Thread safe synchronised automatic interest and penaly payments 
+        synchronized (accounts) {
+            Iterator<BaseAccount> iterator = accounts.iterator();
+            
+            while (iterator.hasNext()) {
+                iterator.next().payWithInterest();
+                iterator.next().applyOverdraftPenaltyIfPossible();
+            }
         }
     }
 
