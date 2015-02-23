@@ -147,18 +147,18 @@ public final class Money {
         final String[] parsedData = new String[3];
 
         valueString = valueString.trim();
-        
+
         // Removes currency symbol and extra spaces if detected
         if (valueString.contains(CURRENCY_SYMBOL + " ")) {
             valueString = valueString.replace(CURRENCY_SYMBOL + " ", "");
         }
-        
+
         // Removes commas
         // Allows to accept number string with commas
         if (valueString.contains(",")) {
             valueString = valueString.replace(",", "");
         }
-        
+
 
         /*
          Regex conditions:
@@ -717,11 +717,11 @@ public final class Money {
 
         return CURRENCY_SYMBOL + " " + signText + poundsStr + DECIMAL_POINT + penceStr;
     }
-    
+
     public boolean isLessThanOrEqualTo(Money money) {
         return isLessThan(money) || isEqualTo(money);
     }
-    
+
     public boolean isGreaterThanOrEqualTo(Money money) {
         return isGreaterThan(money) || isEqualTo(money);
     }
@@ -741,6 +741,5 @@ public final class Money {
     public boolean isZero() {
         return getPounds() == 0 && getPence() == 0;
     }
-    
-    
+
 }

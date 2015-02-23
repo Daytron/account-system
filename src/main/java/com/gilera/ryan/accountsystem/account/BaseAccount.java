@@ -24,25 +24,25 @@ public abstract class BaseAccount implements Account {
             = new Money(Sign.Positive, 20, 00);
 
     private Money balance;
-    private final List<String> listOfAccountHolders;
+    private final List<Client> listOfAccountHolders;
     private final List<Transaction> listOfTransactions;
     private final String interestRate;
     private final String accountNumber;
     private final AccountType accountType;
-    private final Client client;
+    private int clientCounter;
 
     //Set up a new account 
     public BaseAccount(Client owner, String accountNumber,
             AccountType accountType, String interestRate) {
         this.listOfAccountHolders = new ArrayList<>();
         this.listOfTransactions = new ArrayList<>();
+        this.listOfAccountHolders.add(owner);
+        this.clientCounter = 1;
 
-        this.client = owner;
-        
         // Initial balance at zero
         // See Money class for other constructors
         this.balance = new Money();
-        
+
         this.accountNumber = accountNumber;
         this.accountType = accountType;
 
@@ -50,24 +50,27 @@ public abstract class BaseAccount implements Account {
     }
 
     //Add account holder 
-    /*
-     public void AddAccHolder(String accountName, long accountNumber) {
-     this.listOfAccountHolders.add(accountName);
-     this.accountNumber = accountNumber;
-     }
-     */
-    public String getClientName() {
-        return this.client.getName();
+    public int addAccountHolder(Client client) {
+        // makes sure you only add once for joint account
+        // also makes sure you don't add the same person again
+        if (clientCounter < 2) {
+            if (client.getId() != this.listOfAccountHolders.get(0).getId()) {
+                this.listOfAccountHolders.add(client);
+                this.clientCounter += 1;
+                return 0;
+            } else {
+                return 2;
+            }
+
+        } else {
+            return 1;
+        }
     }
 
-    public UUID getClientID() {
-        return this.client.getId();
+    public List<Client> getListOfAccountHolders() {
+        return listOfAccountHolders;
     }
 
-    public Client getClient() {
-        return this.client;
-    }
-    
     public String getAccountNum() {
         return this.accountNumber;
     }
@@ -75,16 +78,16 @@ public abstract class BaseAccount implements Account {
     public String getInterestRate() {
         return this.interestRate;
     }
-    
+
     public String getInterestRateInPercentage() {
         String rate = this.interestRate;
-        
+
         String[] aStringArray = rate.split("\\.");
-        
+
         // Discard first element assuming interest rate should 
         // be less than 100 percent rate
         String newInterestRate = aStringArray[1];
-        
+
         // Discard extra zeros in the first 2 digits
         int count = 0;
         while (true) {
@@ -95,18 +98,18 @@ public abstract class BaseAccount implements Account {
                 break;
             }
         }
-        
+
         // Calculate decimal places to shift to percentage
         int decimalPlaces = 2 - count;
-        
+
         // Prepare the output
         if (decimalPlaces == 0) {
             newInterestRate = "0." + newInterestRate;
         } else {
-            newInterestRate = newInterestRate.substring(0, decimalPlaces) 
+            newInterestRate = newInterestRate.substring(0, decimalPlaces)
                     + "." + newInterestRate.substring(decimalPlaces);
         }
-        
+
         return newInterestRate;
     }
 
@@ -136,19 +139,17 @@ public abstract class BaseAccount implements Account {
         }
 
         Money amountWithInterest;
-        
+
         // If money is too small to calculate interest amount
         // set amountWithInterest to zero
         // Ex. if balance is £ 0.01
         try {
             amountWithInterest = this.balance.multipliedBy(
-                this.interestRate);
+                    this.interestRate);
         } catch (Exception e) {
             // Empty money
             amountWithInterest = new Money();
         }
-        
-        
 
         this.balance = amountWithInterest.plus(this.balance);
 
@@ -175,7 +176,7 @@ public abstract class BaseAccount implements Account {
         this.listOfTransactions.add(new Transaction(date, transactionType,
                 amount, balance));
     }
-    
+
     public boolean isTransactionsEmpty() {
         return this.listOfTransactions.isEmpty();
     }
@@ -186,13 +187,17 @@ public abstract class BaseAccount implements Account {
 
     @Override
     public String toString() {
+        String client_s = "";
+
+        for (Client client : this.listOfAccountHolders) {
+            client_s += "\n";
+            client_s += client.toString();
+        }
+
         return "Account summary:\n"
-                + "Client Name: "
-                + getClientName()
                 + "\nAccount Number: "
                 + getAccountNum()
-                + "\nCustomer ID: "
-                + getClientID()
+                + client_s
                 + "\nBalance: "
                 + getBalance().toString()
                 + "\n\nAccount Type: "
@@ -204,6 +209,5 @@ public abstract class BaseAccount implements Account {
                 + "\nOverdraft Limit: "
                 + getAccountType().getOverdraftLimit();
     }
-    
-    
+
 }

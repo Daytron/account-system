@@ -29,4 +29,16 @@ public final class Client {
         return id;
     }
     
+    public boolean isEqualTo(Client client) {
+        return this.id.equals(client.id);
+    }
+
+    @Override
+    public String toString() {
+        return "Client Name: " + getName() 
+                + "\nClient ID: " + getId();
+    }
+    
+    
+    
 }

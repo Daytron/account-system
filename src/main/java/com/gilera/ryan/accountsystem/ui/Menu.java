@@ -793,9 +793,13 @@ public final class Menu {
 
                     while (iterator.hasNext()) {
                         BaseAccount account = iterator.next();
-                        if (account.getClientID().equals(client.getId())) {
-                            displayTransactionsForAnAccount(account);
+
+                        for (Client aClient : account.getListOfAccountHolders()) {
+                            if (aClient.isEqualTo(client)) {
+                                displayTransactionsForAnAccount(account);
+                            }
                         }
+
                     }
                 }
 
@@ -820,24 +824,93 @@ public final class Menu {
     private void displayResultTransactionsSingle(BaseAccount accountToView) {
         displayResultSeparator();
         System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_SINGLE.getText());
-        System.out.println("Account name: " + accountToView.getClientName());
+
+        for (Client aClient : accountToView.getListOfAccountHolders()) {
+            System.out.println("Account name: " + aClient.getName());
+        }
         System.out.println("Account number: " + accountToView.getAccountNum() + "\n");
     }
 
     private void addAccountHolder() {
-        System.out.println("Under review..");
-        /*
-         System.out.println("Enter Account Number");
-         newReadyAccountNumberToUse = Integer.parseInt(input.nextLine());
-         System.out.println("Enter Customer first and Last Name");
-         custName = input.nextLine();
+        Client client, previousClient = null;
 
-         for (BaseAccount account : accounts) {
-         if (account.getAccountNum() == acc_number) {
-         account.AddAccHolder(custName, newReadyAccountNumberToUse);
-         break;
-         }
-         } */
+        String name = processInputForClientName(
+                ConstantString.ENTER_CLIENT_NAME.getText());
+
+        name = StringUtil.formatClientName(name);
+
+        boolean isAlreadyAClient = false;
+        synchronized (this.listOfAccounts) {
+            Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
+
+            while (iterator.hasNext()) {
+                BaseAccount account = iterator.next();
+
+                if (!isAlreadyAClient) {
+                    for (Client aClient : account.getListOfAccountHolders()) {
+                        if (aClient.getName().toLowerCase()
+                                .equalsIgnoreCase(name.toLowerCase())) {
+                            isAlreadyAClient = true;
+                            previousClient = aClient;
+                            break;
+                        }
+                    }
+                } else {
+                    break;
+                }
+
+            }
+        }
+        
+        if (isAlreadyAClient) {
+            displayResultSeparator();
+            System.out.println(
+                ConstantString.SUCCESS_CLIENT_FOUND.getText());
+            System.out.println(previousClient);
+            System.out.println("Is this the client you're looking for? (y/n):");
+            String response = this.input.nextLine();
+            
+            if (!response.equalsIgnoreCase("y")) {
+                displayResultSeparator();
+                System.out.println(""); 
+                System.out.println(
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
+                return;
+            } else {
+                client = previousClient;
+            }
+        } else {
+            client = new Client(name);
+        }
+        
+        BaseAccount accountInvolved = processInputForAccountNumber(
+                ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
+        
+        if (accountInvolved == null) {
+            return;
+        }
+        
+        final int addClientResult = accountInvolved.addAccountHolder(client);
+        
+        displayResultSeparator();
+        switch (addClientResult) {
+            case 1:
+                System.out.println("Error! The account is already full, cannot add "
+                        + "further client.");
+                System.out.println(
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
+                break;
+                
+            case 2:
+                System.out.println("Error! The person is already registered on"
+                        + " that account. You cannot add twice.");
+                System.out.println(
+                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
+                break;
+            case 0:
+                System.out.println("Successfully added a client.");
+                System.out.println(accountInvolved);
+        }
     }
 
     private void showAccountsHeldByAClient() {
@@ -863,10 +936,13 @@ public final class Menu {
             while (iterator.hasNext()) {
                 BaseAccount account = iterator.next();
 
-                if (account.getClientID().equals(client.getId())) {
-                    displayResultSeparator();
-                    System.out.println(account);
+                for (Client aClient : account.getListOfAccountHolders()) {
+                    if (aClient.isEqualTo(client)) {
+                        displayResultSeparator();
+                        System.out.println(account);
+                    }
                 }
+
             }
         }
 
@@ -880,10 +956,14 @@ public final class Menu {
 
             while (iterator.hasNext()) {
                 BaseAccount account = iterator.next();
-                if (account.getClientName().toLowerCase()
-                        .equalsIgnoreCase(name.toLowerCase())) {
-                    return account.getClient();
+
+                for (Client aClient : account.getListOfAccountHolders()) {
+                    if (aClient.getName().toLowerCase()
+                            .equalsIgnoreCase(name.toLowerCase())) {
+                        return aClient;
+                    }
                 }
+
             }
         }
 

@@ -51,6 +51,7 @@ public class MoneyTest {
 
         // Then:
         assertEquals(expResult, result);
+        
     }
 
     /**
