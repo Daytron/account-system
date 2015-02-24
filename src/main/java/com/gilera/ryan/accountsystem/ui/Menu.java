@@ -45,7 +45,7 @@ public final class Menu {
     private final Map<String, Integer> optionsForViewTransactionsMenu;
     private final Map<String, Integer> optionsForTransactionTypesMenu;
 
-    private static final int TOTAL_MAIN_MENU_OPTIONS = 10;
+    private static final int TOTAL_MAIN_MENU_OPTIONS = 9;
     private static final int TOTAL_ACCOUNT_OPTIONS = 10;
     private static final int TOTAL_VIEW_TRANSACTIONS_OPTIONS = 6;
     private static final int TOTAL_TRANSACTION_TYPE_OPTIONS = 7;
@@ -154,23 +154,18 @@ public final class Menu {
                     transferMoney();
                     break;
 
-                // Pay interest
-                case 6:
-                    payWithInterest();
-                    break;
-
                 // Add account holder
-                case 7:
+                case 6:
                     addAccountHolder();
                     break;
 
                 // Show all accounts Held by a customer
-                case 8:
+                case 7:
                     showAccountsHeldByAClient();
                     break;
 
                 // View transactions
-                case 9:
+                case 8:
                     viewTransactions();
                     break;
 

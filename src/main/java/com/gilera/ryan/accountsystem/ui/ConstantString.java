@@ -50,10 +50,9 @@ enum ConstantString {
             + " [3] Display Balance\n"
             + " [4] Withdraw\n"
             + " [5] Transfer Money\n"
-            + " [6] Pay Interest\n"
-            + " [7] Add Account Holder\n"
-            + " [8] Show all accounts held by a customer\n"
-            + " [9] View Transactions\n"
+            + " [6] Add Account Holder\n"
+            + " [7] Show all accounts held by a customer\n"
+            + " [8] View Transactions\n"
             + " [0] Exit\n"),
     MENU_NEW_ACCOUNTS("Choose from any of these accounts.\n"
             + " [1] Current Account\n"

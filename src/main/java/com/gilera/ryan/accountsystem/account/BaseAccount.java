@@ -12,7 +12,6 @@ import java.util.Date;
 import com.gilera.ryan.accountsystem.log.Transaction;
 import com.gilera.ryan.accountsystem.log.TransactionType;
 import java.util.List;
-import java.util.UUID;
 
 /**
  *
