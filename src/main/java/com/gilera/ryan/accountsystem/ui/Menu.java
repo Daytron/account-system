@@ -502,15 +502,15 @@ public final class Menu {
             accountTo.addTransaction(new Date(),
                     TransactionType.TRANSFER, amountToTransfer,
                     accountTo.getBalance());
+            
+            displayResultSeparator();
+            System.out.println(ConstantString.SUCCESS_TRANSFER.getText());
         } else {
+            displayResultSeparator();
             System.out.println(ConstantString.ERROR_INSUFFICIENT_AMOUNT_TO_TRANSFER.getText());
             System.out.println(
                     ConstantString.ERROR_OPERATION_CANCELLED.getText());
-            return;
         }
-
-        displayResultSeparator();
-        System.out.println(ConstantString.SUCCESS_TRANSFER.getText());
 
     }
 
@@ -832,44 +832,41 @@ public final class Menu {
         String name = processInputForClientName(
                 ConstantString.ENTER_CLIENT_NAME.getText());
 
-        name = StringUtil.formatClientName(name);
+        if (name == null) {
+            return;
+        }
 
         boolean isAlreadyAClient = false;
         synchronized (this.listOfAccounts) {
             Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
 
-            while (iterator.hasNext()) {
+            while (iterator.hasNext() && !isAlreadyAClient) {
                 BaseAccount account = iterator.next();
 
-                if (!isAlreadyAClient) {
-                    for (Client aClient : account.getListOfAccountHolders()) {
-                        if (aClient.getName().toLowerCase()
-                                .equalsIgnoreCase(name.toLowerCase())) {
-                            isAlreadyAClient = true;
-                            previousClient = aClient;
-                            break;
-                        }
+                for (Client aClient : account.getListOfAccountHolders()) {
+                    if (aClient.getName().toLowerCase()
+                            .equalsIgnoreCase(name.toLowerCase())) {
+                        isAlreadyAClient = true;
+                        previousClient = aClient;
+                        break;
                     }
-                } else {
-                    break;
                 }
-
             }
         }
-        
+
         if (isAlreadyAClient) {
             displayResultSeparator();
             System.out.println(
-                ConstantString.SUCCESS_CLIENT_FOUND.getText());
+                    ConstantString.SUCCESS_CLIENT_FOUND.getText());
             System.out.println(previousClient);
             System.out.println("Is this the client you're looking for? (y/n):");
             String response = this.input.nextLine();
-            
+
             if (!response.equalsIgnoreCase("y")) {
                 displayResultSeparator();
-                System.out.println(""); 
+                System.out.println("");
                 System.out.println(
-                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
+                        ConstantString.ERROR_OPERATION_CANCELLED.getText());
                 return;
             } else {
                 client = previousClient;
@@ -877,30 +874,30 @@ public final class Menu {
         } else {
             client = new Client(name);
         }
-        
+
         BaseAccount accountInvolved = processInputForAccountNumber(
                 ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
-        
+
         if (accountInvolved == null) {
             return;
         }
-        
+
         final int addClientResult = accountInvolved.addAccountHolder(client);
-        
+
         displayResultSeparator();
         switch (addClientResult) {
             case 1:
                 System.out.println("Error! The account is already full, cannot add "
                         + "further client.");
                 System.out.println(
-                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
+                        ConstantString.ERROR_OPERATION_CANCELLED.getText());
                 break;
-                
+
             case 2:
                 System.out.println("Error! The person is already registered on"
                         + " that account. You cannot add twice.");
                 System.out.println(
-                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
+                        ConstantString.ERROR_OPERATION_CANCELLED.getText());
                 break;
             case 0:
                 System.out.println("Successfully added a client.");
@@ -1104,7 +1101,7 @@ public final class Menu {
             // Replaces all 1 or more spaces in between to single space
             // Ex. "ryan    gilera   " becomes "ryan gilera"
             clientName = StringUtil.removeExtraSpacesInName(clientName);
-
+            clientName = StringUtil.formatClientName(clientName);
             return clientName;
         } else {
             displayResultSeparator();
