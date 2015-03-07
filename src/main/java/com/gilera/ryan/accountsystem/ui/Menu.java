@@ -514,33 +514,6 @@ public final class Menu {
 
     }
 
-    private void payWithInterest() {
-        boolean isEmpty;
-
-        synchronized (this.listOfAccounts) {
-            isEmpty = this.listOfAccounts.isEmpty();
-        }
-
-        if (isEmpty) {
-            System.out.println(
-                    ConstantString.ERROR_PAY_WITH_INTEREST_EMPTY_LIST.getText());
-            System.out.println(
-                    ConstantString.ERROR_OPERATION_CANCELLED.getText());
-            return;
-        }
-
-        synchronized (this.listOfAccounts) {
-            Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
-
-            while (iterator.hasNext()) {
-                iterator.next().payWithInterest();
-            }
-        }
-
-        displayResultSeparator();
-        System.out.println(ConstantString.SUCCESS_PAY_INTEREST_MANUALLY.getText());
-    }
-
     private void viewTransactions() {
         BaseAccount accountToViewTransaction;
 
