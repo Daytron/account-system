@@ -6,6 +6,7 @@
 package com.gilera.ryan.accountsystem.utility;
 
 import java.text.NumberFormat;
+import java.util.Objects;
 
 /**
  *
@@ -305,7 +306,7 @@ public final class Money {
         } else {
 
             // Determine sign
-            // Reverse sign and swap values if thisPounds is greater than thatPounds
+            // Reverse sign and swap values if thisPounds is less than thatPounds
             // or they are equal whole numbers but thatPence is greater than 
             // thisPence. Otherwise retain sign;
             if (thisPounds < thatPounds
@@ -619,73 +620,81 @@ public final class Money {
 
         return listOfNumbers;
     }
-
-    public boolean isLessThan(Money money) {
+    
+    public int compareTo(Money money) {
         if (money == null) {
-            return false;
+            throw new NullPointerException("Null input!");
         } else if (getSign() == Sign.Negative && money.getSign() == Sign.Positive) {
-            return true;
+            return -1;
         } else if (getSign() == Sign.Positive && money.getSign() == Sign.Negative) {
-            return false;
+            return 1;
         } else if (getSign() == Sign.Negative && money.getSign() == Sign.Negative) {
             if (getPounds() > money.getPounds()) {
-                return true;
-            } else if (getPounds() == money.getPounds()) {
-                return getPence() > money.getPence();
+                return -1;
+            }else if (getPounds() < money.getPounds()){
+                return 1; 
             } else {
-                return false;
-            }
+                if (getPence() < money.getPence()){
+                    return 1;
+                } else if (getPence() > money.getPence()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            } 
         } else {
             // All positive values
-            if (getPounds() < money.getPounds()) {
-                return true;
-            } else if (getPounds() == money.getPounds()) {
-                return getPence() < money.getPence();
+            if (getPounds() > money.getPounds()) {
+                return 1;
+            }else if (getPounds() < money.getPounds()){
+                return -1; 
             } else {
-                return false;
-            }
+                if (getPence() < money.getPence()){
+                    return -1;
+                } else if (getPence() > money.getPence()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } 
         }
+    }
+
+    public boolean isLessThan(Money money) {
+        return compareTo(money) == -1;
 
     }
 
     public boolean isGreaterThan(Money money) {
-        if (money == null) {
-            return false;
-        }
-
-        if (getSign() == Sign.Negative && money.getSign() == Sign.Positive) {
-            return false;
-        } else if (getSign() == Sign.Positive && money.getSign() == Sign.Negative) {
-            return true;
-        } else if (getSign() == Sign.Negative && money.getSign() == Sign.Negative) {
-            if (getPounds() < money.getPounds()) {
-                return true;
-            } else if (getPounds() == money.getPounds()) {
-                return getPence() < money.getPence();
-            } else {
-                return false;
-            }
-        } else {
-            // All positive values
-            if (getPounds() > money.getPounds()) {
-                return true;
-            } else if (getPounds() == money.getPounds()) {
-                return getPence() > money.getPence();
-            } else {
-                return false;
-            }
-        }
-
+        return compareTo(money) == 1;
     }
 
-    public boolean isEqualTo(Money money) {
+    @Override
+    public boolean equals(Object money) {
         if (money == null) {
             return false;
         }
+        if (this == money) {
+            return true;
+        }
+        if (!(money instanceof Money)) {
+            return false;
+        }
 
-        return getSign() == money.getSign()
-                && getPounds() == money.getPounds()
-                && getPence() == money.getPence();
+        Money thatMoney = (Money) money;
+
+        return getSign() == thatMoney.getSign()
+                && getPounds() == thatMoney.getPounds()
+                && getPence() == thatMoney.getPence();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (int) (this.pounds ^ (this.pounds >>> 32));
+        hash = 79 * hash + (int) (this.pence ^ (this.pence >>> 32));
+        hash = 79 * hash + Objects.hashCode(this.sign);
+        return hash;
     }
 
     @Override
@@ -719,11 +728,11 @@ public final class Money {
     }
 
     public boolean isLessThanOrEqualTo(Money money) {
-        return isLessThan(money) || isEqualTo(money);
+        return isLessThan(money) || equals(money);
     }
 
     public boolean isGreaterThanOrEqualTo(Money money) {
-        return isGreaterThan(money) || isEqualTo(money);
+        return isGreaterThan(money) || equals(money);
     }
 
     public boolean isPositiveOrZero() {
