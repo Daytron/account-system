@@ -667,7 +667,7 @@ public class MoneyTest {
         // Case 10: (-)(-) & absolute (money1 < money2)
         // Given:
         money1 = new Money(Sign.Negative, 15, 50);
-        money2 = new Money(Sign.Negative, 15, 299);
+        money2 = new Money(Sign.Negative, 15, 69);
 
         expResult = false;
 
@@ -680,8 +680,8 @@ public class MoneyTest {
 
         // Case 11: (-)(-) & absolute (money1 > money2)
         // Given:
-        money1 = new Money(Sign.Negative, 2963, 50);
-        money2 = new Money(Sign.Negative, 2963, 5);
+        money1 = new Money(Sign.Negative, 2963, 69);
+        money2 = new Money(Sign.Negative, 2963, 50);
 
         expResult = true;
 
@@ -842,7 +842,7 @@ public class MoneyTest {
         // Case 10: (-)(-) & absolute (money1 < money2)
         // Given:
         money1 = new Money(Sign.Negative, 15, 50);
-        money2 = new Money(Sign.Negative, 15, 299);
+        money2 = new Money(Sign.Negative, 15, 69);
 
         expResult = true;
 
@@ -856,7 +856,7 @@ public class MoneyTest {
         // Case 11: (-)(-) & absolute (money1 > money2)
         // Given:
         money1 = new Money(Sign.Negative, 2963, 50);
-        money2 = new Money(Sign.Negative, 2963, 05);
+        money2 = new Money(Sign.Negative, 2963, 15);
 
         expResult = false;
 
@@ -925,7 +925,7 @@ public class MoneyTest {
     }
 
     /**
-     * Test of isEqualTo method, of class Money.
+     * Test of equals method, of class Money.
      */
     @Test
     public void testIsEqualTo() {
@@ -938,7 +938,7 @@ public class MoneyTest {
         boolean expResult = false;
 
         // When:
-        boolean result = money1.isEqualTo(money2);
+        boolean result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 1:  Where absolute (Money1 < Money2). Should be "
@@ -952,7 +952,7 @@ public class MoneyTest {
         expResult = false;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 2: Where absolute (Money1 > Money2). Should be "
@@ -966,7 +966,7 @@ public class MoneyTest {
         expResult = true;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 3: Where absolute (Money1 = Money2). Should be "
@@ -980,7 +980,7 @@ public class MoneyTest {
         expResult = false;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 4:  Where absolute (Money1 < Money2). Should be "
@@ -994,7 +994,7 @@ public class MoneyTest {
         expResult = false;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 5: Where absolute (Money1 > Money2). Should be "
@@ -1008,7 +1008,7 @@ public class MoneyTest {
         expResult = false;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 6: Where absolute (Money1 = Money2). Should be "
@@ -1022,7 +1022,7 @@ public class MoneyTest {
         expResult = false;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 7:  Where absolute (Money1 < Money2). Should be "
@@ -1036,7 +1036,7 @@ public class MoneyTest {
         expResult = false;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 8: Where absolute (Money1 > Money2). Should be "
@@ -1050,7 +1050,7 @@ public class MoneyTest {
         expResult = false;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 9: Where absolute (Money1 = Money2). Should be "
@@ -1064,7 +1064,7 @@ public class MoneyTest {
         expResult = false;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 10:  Where absolute (Money1 < Money2). Should be "
@@ -1078,7 +1078,7 @@ public class MoneyTest {
         expResult = false;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 11: Where absolute (Money1 > Money2). Should be "
@@ -1092,7 +1092,7 @@ public class MoneyTest {
         expResult = true;
 
         // When:
-        result = money1.isEqualTo(money2);
+        result = money1.equals(money2);
 
         // Then:
         assertEquals("Case 12: Where absolute (Money1 = Money2). Should be "
