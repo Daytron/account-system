@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gilera.ryan.accountsystem.ui;
 
 import com.gilera.ryan.accountsystem.account.BaseAccount;
@@ -35,7 +30,13 @@ import java.util.Scanner;
 import java.util.Timer;
 
 /**
- *
+ * The Menu class. It is responsible for all user interface
+ * interactions with the users. The core class for the 
+ * whole application.
+ * 
+ * This class uses Singleton pattern to prevent any instantiation
+ * other than one as a preventive or security measure minimising risk.
+ * 
  * @author Ryan Gilera
  */
 public final class Menu {
@@ -67,7 +68,7 @@ public final class Menu {
         }
 
         // Populate options from 1 to TOTAL_ACCOUNT_TYPES
-        // This is new account creation menu
+        // This is new account creation menu options
         // For input verification purposes later on in the menu selection
         this.optionsForNewAccountMenu = new HashMap<>();
         for (int i = 0; i < TOTAL_ACCOUNT_OPTIONS; i++) {
@@ -97,7 +98,7 @@ public final class Menu {
         this.listOfAccounts = Collections
                 .synchronizedList(new ArrayList<BaseAccount>());
 
-        // Fix at 7 digits
+        // Fixed at 7 digits
         // Starts at +1
         this.accountNumberCounter = INITIAL_ACCOUNT_NUMBER;
 
@@ -107,6 +108,7 @@ public final class Menu {
         // Inject or pass the listOfAccounts to the instance
         this.scheduledTask.setAccounts(listOfAccounts);
 
+        // Creates new Timer object
         Timer updateEvery3Minutes = new Timer(true);
 
         // An interval rate of every 3 minutes with initital delay of 3 minutes
@@ -116,6 +118,10 @@ public final class Menu {
                 ScheduledTask.getINTERVAL_TIME());
     }
 
+    /**
+     * Launches the main menu of the program and process 
+     * user's selection.
+     */
     public void launch() {
         boolean isFinish = false;
         boolean isPressEnterKeySkip = false;
@@ -196,11 +202,22 @@ public final class Menu {
 
     }
 
+    /**
+     * Method for pausing the main menu cycle after the previous
+     * action until user press enter key. 
+     * 
+     * The user is let to "absorb" first the result of the 
+     * previous action before cycling back again to main meu. 
+     * This is design for user experience.
+     */
     private void pressEnterKeyToContinue() {
         System.out.print("\n\nPress Enter to continue...");
         input.nextLine();
     }
 
+    /**
+     * Displays a line separator for main menu for readability.
+     */
     private void displayMainSeparator() {
         System.out.println("");
         for (int i = 0; i < SEPARATOR_LENGTH; i++) {
@@ -209,6 +226,9 @@ public final class Menu {
         System.out.println("");
     }
 
+    /**
+     * Displays a line separator for the outcome for readability.
+     */
     private void displayResultSeparator() {
         System.out.println("");
         for (int i = 0; i < SEPARATOR_LENGTH; i++) {
@@ -217,6 +237,9 @@ public final class Menu {
         System.out.println("");
     }
 
+    /**
+     * Creates new account
+     */
     private void createNewAccount() {
         String clientName;
 
@@ -239,7 +262,7 @@ public final class Menu {
             return;
         }
 
-        Client aClient = retrieveClient(clientName);
+        Client aClient = retrieveClient(clientName, false);
 
         // If this is a new client, create new record
         if (aClient == null) {
@@ -342,6 +365,12 @@ public final class Menu {
 
     }
 
+    /**
+     * Formats display result for creating new account depending on 
+     * account type.
+     * 
+     * @param account A BaseAccount object
+     */
     private void displayResultForNewAccountCreation(BaseAccount account) {
         displayResultSeparator();
 
@@ -350,6 +379,9 @@ public final class Menu {
 
     }
 
+    /**
+     * Deposits Money object to an account.
+     */
     private void deposit() {
         Money amountToDeposit;
         BaseAccount accountToDeposit;
@@ -369,7 +401,7 @@ public final class Menu {
         if (amountToDeposit == null) {
             return;
         }
-
+        
         accountToDeposit.deposit(amountToDeposit);
         accountToDeposit.addTransaction(new Date(),
                 TransactionType.DEPOSIT, amountToDeposit,
@@ -386,6 +418,9 @@ public final class Menu {
 
     }
 
+    /**
+     * Withdraws Money object
+     */
     private void withdraw() {
         Money amountToWithdraw;
         BaseAccount accountToWithdraw;
@@ -405,6 +440,7 @@ public final class Menu {
         if (amountToWithdraw == null) {
             return;
         }
+        
 
         // Check if amount has reached max amount per withdrawal
         if (amountToWithdraw.isGreaterThan(
@@ -449,6 +485,9 @@ public final class Menu {
 
     }
 
+    /**
+     * Transfers an Money object from one account to another.
+     */
     private void transferMoney() {
         Money amountToTransfer;
         BaseAccount accountFrom, accountTo;
@@ -486,7 +525,7 @@ public final class Menu {
         if (amountToTransfer == null) {
             return;
         }
-
+        
         // Condition if ((balance - amountToTransfer) >= limit)
         Money newPotentialBalance = accountFrom.getBalance().minus(amountToTransfer);
         // Allows to transfer money as long the accountFrom has a balance of less than
@@ -514,6 +553,11 @@ public final class Menu {
 
     }
 
+    /**
+     * View transactions based on user selection, either by account
+     * number, by client, by account type, by a range of dates or
+     * show all.
+     */
     private void viewTransactions() {
         BaseAccount accountToViewTransaction;
 
@@ -529,6 +573,8 @@ public final class Menu {
             isEmptyList = this.listOfAccounts.isEmpty();
         }
 
+        // Checks if the list account is empty (no accounts been
+        // created yet). If true, cancel this operation.
         if (isEmptyList) {
             displayResultSeparator();
             System.out.println(ConstantString.ERROR_ALL_TRANSACTIONS_EMPTY.getText());
@@ -538,12 +584,13 @@ public final class Menu {
         }
 
         switch (userOptionResponse) {
+            // Cancel View Transaction operation
             case 0:
                 displayResultSeparator();
                 System.out.println(
                         ConstantString.ERROR_OPERATION_CANCELLED.getText());
                 break;
-
+            // View transactions of all accounts
             case 1:
                 displayResultSeparator();
                 System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_ALL.getText());
@@ -557,7 +604,7 @@ public final class Menu {
                 }
 
                 break;
-
+            // View transactions for one accoun
             case 2:
                 accountToViewTransaction = processInputForAccountNumber(
                         ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
@@ -569,7 +616,7 @@ public final class Menu {
                 displayTransactionsForAnAccount(accountToViewTransaction);
 
                 break;
-
+            // View transactions by certain date range for one account
             case 3:
                 accountToViewTransaction = processInputForAccountNumber(
                         ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
@@ -658,9 +705,8 @@ public final class Menu {
                 }
 
                 break;
-
+            // View transactions by type for one account
             case 4:
-
                 // Display sub menus
                 System.out.println(ConstantString.MENU_VIEW_TRANSACTION_TYPES.getText());
 
@@ -738,7 +784,7 @@ public final class Menu {
                 }
 
                 break;
-
+            // View transactions by client
             case 5:
                 String clientName = processInputForClientName(
                         ConstantString.ENTER_CLIENT_NAME.getText());
@@ -763,7 +809,7 @@ public final class Menu {
                         BaseAccount account = iterator.next();
 
                         for (Client aClient : account.getListOfAccountHolders()) {
-                            if (aClient.isEqualTo(client)) {
+                            if (aClient.equals(client)) {
                                 displayTransactionsForAnAccount(account);
                             }
                         }
@@ -776,6 +822,12 @@ public final class Menu {
 
     }
 
+    /**
+     * Displays transactions for an account. Utility method for view transaction
+     * method.
+     * 
+     * @param accountToView A BaseAccount object
+     */
     private void displayTransactionsForAnAccount(BaseAccount accountToView) {
         displayResultTransactionsSingle(accountToView);
 
@@ -789,6 +841,11 @@ public final class Menu {
         }
     }
 
+    /**
+     * Display account holder information for viewing transactions.
+     * 
+     * @param accountToView A BaseAccount object
+     */
     private void displayResultTransactionsSingle(BaseAccount accountToView) {
         displayResultSeparator();
         System.out.println(ConstantString.SUCCESS_VIEW_TRANSACTIONS_SINGLE.getText());
@@ -799,6 +856,9 @@ public final class Menu {
         System.out.println("Account number: " + accountToView.getAccountNum() + "\n");
     }
 
+    /**
+     * Adds a Client object to an account.
+     */
     private void addAccountHolder() {
         Client client, previousClient = null;
 
@@ -809,6 +869,7 @@ public final class Menu {
             return;
         }
 
+        // Determine first if the name exist before
         boolean isAlreadyAClient = false;
         synchronized (this.listOfAccounts) {
             Iterator<BaseAccount> iterator = this.listOfAccounts.iterator();
@@ -827,6 +888,10 @@ public final class Menu {
             }
         }
 
+        // If it exist previously as Client object, offer choice
+        // if user wants to use it or not.
+        // if yes, use the same Client object, otherwise cancel
+        // this operation.
         if (isAlreadyAClient) {
             displayResultSeparator();
             System.out.println(
@@ -848,6 +913,7 @@ public final class Menu {
             client = new Client(name);
         }
 
+        // Get the account involved
         BaseAccount accountInvolved = processInputForAccountNumber(
                 ConstantString.ENTER_ACCOUNT_NUM_DEFAULT.getText());
 
@@ -878,6 +944,9 @@ public final class Menu {
         }
     }
 
+    /**
+     * Shows account held by a client.
+     */
     private void showAccountsHeldByAClient() {
         String clientName = processInputForClientName(
                 ConstantString.ENTER_CLIENT_NAME.getText());
@@ -902,7 +971,7 @@ public final class Menu {
                 BaseAccount account = iterator.next();
 
                 for (Client aClient : account.getListOfAccountHolders()) {
-                    if (aClient.isEqualTo(client)) {
+                    if (aClient.equals(client)) {
                         displayResultSeparator();
                         System.out.println(account);
                     }
@@ -913,7 +982,35 @@ public final class Menu {
 
     }
 
+    /**
+     * Retrieves Client object based on name given if possible. 
+     * Accept a single argument, a name. Boolean value argument
+     * is set to true.
+     * 
+     * @param name
+     * @return 
+     */
     private Client retrieveClient(String name) {
+        return retrieveClient(name, true);
+    }
+    
+    /**
+     * Retrieves Client object based on name given if possible. 
+     * Accepts two arguments, a name and a boolean value.
+     * 
+     * Boolean value separates a different error message. 
+     * A true value means a failed client retrieval will
+     * result to automatic operation cancellation on
+     * whatever it is being used to, hence cancellation
+     * message is used.
+     * 
+     * False will lead only to simple error message.
+     * 
+     * @param name
+     * @param showOperationCancelledMessage
+     * @return 
+     */
+    private Client retrieveClient(String name, boolean showOperationCancelledMessage) {
         name = StringUtil.formatClientName(name);
 
         synchronized (this.listOfAccounts) {
@@ -934,12 +1031,18 @@ public final class Menu {
 
         displayResultSeparator();
         System.out.println(ConstantString.ERROR_NO_CLIENT_FOUND.getText());
-        System.out.println(
+        
+        if (showOperationCancelledMessage) {
+            System.out.println(
                 ConstantString.ERROR_OPERATION_CANCELLED.getText());
+        }
+        
         return null;
-
     }
 
+    /**
+     * Views the balance of the selected account.
+     */
     private void viewBalance() {
         BaseAccount accountToViewBalance;
 
@@ -961,6 +1064,13 @@ public final class Menu {
 
     }
 
+    /**
+     * Method for processing users input based on the list given 
+     * as argument.
+     * 
+     * @param listOfOptions list of inputs as List object
+     * @return integer value as the user's choice
+     */
     private int processInputForMenuOptions(Map<String, Integer> listOfOptions) {
         String optionString;
         Integer userOptionResponse;
@@ -981,6 +1091,12 @@ public final class Menu {
         return userOptionResponse;
     }
 
+    /**
+     * Method for processing user's input for account object retrieval.
+     * 
+     * @param messageToUser A String object as the question for users
+     * @return A BaseAccount object
+     */
     private BaseAccount processInputForAccountNumber(String messageToUser) {
         String accountNumber;
 
@@ -1012,8 +1128,14 @@ public final class Menu {
 
     }
 
+    /**
+     * Process user's input for Money object.
+     * 
+     * @param messageToUser A String object as the question for users
+     * @return A Money object
+     */
     private Money processInputForMoney(String messageToUser) {
-        Money amountGiven;
+        Money amountGiven = null;
 
         System.out.print(messageToUser);
         String amountGivenStr = this.input.nextLine();
@@ -1021,7 +1143,12 @@ public final class Menu {
         try {
             amountGiven = Money.valueOf(amountGivenStr);
 
-            if (amountGiven != null) {
+            if (amountGiven != null && amountGiven.isZero()) {
+                displayResultSeparator();
+                System.out.println(ConstantString.ERROR_AMOUNT_INPUT_ZERO.getText());
+                System.out.println(ConstantString.ERROR_OPERATION_CANCELLED.getText());
+                return null;
+            } else {
                 return amountGiven;
             }
         } catch (Exception e) {
@@ -1035,6 +1162,12 @@ public final class Menu {
 
     }
 
+    /**
+     * Process user's input for Date object.
+     * 
+     * @param messageToUser A String object as the question for users
+     * @return A Date object
+     */
     private Date processInputForDate(String messageToUser) {
         Date date;
         SimpleDateFormat simpleDateFormat
@@ -1060,6 +1193,12 @@ public final class Menu {
 
     }
 
+    /**
+     * Process user's input for String object. This use for name inputs. 
+     * 
+     * @param messageToUser A String object as the question for users
+     * @return A String object
+     */
     private String processInputForClientName(String instructionMsg) {
         String clientName;
 
@@ -1072,7 +1211,7 @@ public final class Menu {
         if (clientName.matches("^[\\p{L} .'-]+$")) {
             // First it trims extra spaces in the beginning and end
             // Replaces all 1 or more spaces in between to single space
-            // Ex. "ryan    gilera   " becomes "ryan gilera"
+            // Ex. "   ryan    gilera   " becomes "ryan gilera"
             clientName = StringUtil.removeExtraSpacesInName(clientName);
             clientName = StringUtil.formatClientName(clientName);
             return clientName;
@@ -1084,11 +1223,18 @@ public final class Menu {
             return null;
         }
     }
-
+    
+    /**
+     * Static method for returning the one and only one instance of this class.
+     * @return 
+     */
     public static Menu getInstance() {
         return MenuHolder.INSTANCE;
     }
 
+    /**
+     * A private static inner class that holds the only instance of this class.
+     */
     private static class MenuHolder {
 
         private static final Menu INSTANCE = new Menu();

@@ -1,17 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gilera.ryan.accountsystem.utility;
 
 /**
- *
+ * An enumeration type for sign values of Money object.
+ * 
  * @author Ryan Gilera
  */
 public enum Sign {
 
     // Including zero
+    // For simplicity, zero is assumed positive
+    // But when a zero money is printed,
+    // positive sign is removed
     Positive("+"),
     // Below zero
     Negative("-");

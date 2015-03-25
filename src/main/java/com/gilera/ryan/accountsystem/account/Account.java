@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gilera.ryan.accountsystem.account;
 
 import com.gilera.ryan.accountsystem.utility.Money;
 
 /**
- *
+ * An interface as the blueprint for all accounts.
  * @author Ryan Gilera
  */
 public interface Account {

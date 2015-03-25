@@ -1,15 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gilera.ryan.accountsystem.log;
 
 import com.gilera.ryan.accountsystem.utility.Money;
 import java.util.Date;
 
 /**
- *
+ * The transaction class
+ * 
  * @author Ryan Gilera
  */
 public class Transaction {

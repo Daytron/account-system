@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gilera.ryan.accountsystem.account;
 
 import com.gilera.ryan.accountsystem.utility.Money;
@@ -14,7 +9,9 @@ import com.gilera.ryan.accountsystem.log.TransactionType;
 import java.util.List;
 
 /**
- *
+ * An abstract class that realise the Account interface. 
+ * It's the base class for all account functionalities.
+ * 
  * @author Ryan Gilera
  */
 public abstract class BaseAccount implements Account {
@@ -30,8 +27,8 @@ public abstract class BaseAccount implements Account {
     private final AccountType accountType;
     private int clientCounter;
 
-    //Set up a new account 
-    public BaseAccount(Client owner, String accountNumber,
+    // Constructor for new objects
+    protected BaseAccount(Client owner, String accountNumber,
             AccountType accountType, String interestRate) {
         this.listOfAccountHolders = new ArrayList<>();
         this.listOfTransactions = new ArrayList<>();
@@ -39,7 +36,7 @@ public abstract class BaseAccount implements Account {
         this.clientCounter = 1;
 
         // Initial balance at zero
-        // See Money class for other constructors
+        // See Money class for overloaded constructors
         this.balance = new Money();
 
         this.accountNumber = accountNumber;
@@ -48,7 +45,17 @@ public abstract class BaseAccount implements Account {
         this.interestRate = interestRate;
     }
 
-    //Add account holder 
+    /**
+     * Add a Client object to an account. Only allows add another 
+     * account holder once as a joint account. It returns an integer
+     * value as result of the process. 0 means success that a client 
+     * object is added to the account, 1 means failure if there are 
+     * already two people in it and 2, another failure code, if
+     * the client object argument already exist in the account.
+     * 
+     * @param client The Client object that represents an account holder
+     * @return An integer value that represents output outcome.
+     */
     public int addAccountHolder(Client client) {
         // makes sure you only add once for joint account
         // also makes sure you don't add the same person again
@@ -66,18 +73,40 @@ public abstract class BaseAccount implements Account {
         }
     }
 
+    /**
+     * Returns list of account holders as List object
+     * 
+     * @return List of account holders as List object
+     */
     public List<Client> getListOfAccountHolders() {
         return listOfAccountHolders;
     }
 
+    /**
+     * Returns the account number as String.
+     * 
+     * @return The account number as String
+     */
     public String getAccountNum() {
         return this.accountNumber;
     }
 
+    /**
+     * Returns the interest rate as String.
+     * 
+     * @return The interest rate as String.
+     */
     public String getInterestRate() {
         return this.interestRate;
     }
 
+    /**
+     * Converts the decimal value of the interest in String to 
+     * percentage equivalent, still in String format. This for 
+     * output display purposes. 
+     * 
+     * @return The formatted String object 
+     */
     public String getInterestRateInPercentage() {
         String rate = this.interestRate;
 
@@ -112,24 +141,48 @@ public abstract class BaseAccount implements Account {
         return newInterestRate;
     }
 
+    /**
+     * Withdraws Money object from balance.
+     * 
+     * @param amountToWithdraw A Money object to withdraw 
+     */
     public void withdraw(Money amountToWithdraw) {
         this.balance = this.balance.minus(amountToWithdraw);
     }
 
+    /**
+     * Deposits Money object to the balance. The actual 
+     * implementation from the Account interface.
+     * 
+     * @param amountToDeposit A Money object to deposit 
+     */
     @Override
     public void deposit(Money amountToDeposit) {
         this.balance = this.balance.plus(amountToDeposit);
     }
 
+    /**
+     * Return the balance as Money object.
+     * 
+     * @return The balance as Money object
+     */
     @Override
     public Money getBalance() {
         return this.balance;
     }
 
+    /**
+     * Returns the account type as AccountType object.
+     * @return The account type as AccountType object
+     */
     public AccountType getAccountType() {
         return this.accountType;
     }
 
+    /**
+     * Try and add interest to the account if the balance is
+     * greater than zero.
+     */
     public void payWithInterest() {
         // if balance is less than or equal to zero
         // skip interest
@@ -154,36 +207,63 @@ public abstract class BaseAccount implements Account {
 
         addTransaction(new Date(), TransactionType.PAID_INTEREST,
                 amountWithInterest, this.balance);
-
-        //System.out.println("Acount: " + getAccountNum()
-        //    + " Balance: " + getBalance());
     }
 
+    /**
+     * Tries to apply overdraft penalty fee if the account balance 
+     * has reach or less than the overdraft limit.
+     */
     public void applyOverdraftPenaltyIfPossible() {
-        if (getBalance().isLessThan(new Money())) {
-            //System.out.print("Overdraft detected. " +
-            //        "Previous balance " + getBalance() + ".");
+        // If the current balance <= to the overdraft limit
+        // with an exception if the overdraft limit is zero do not
+        // penalize
+        if (getBalance().isLessThanOrEqualTo(getAccountType().getOverdraftLimit()) && 
+                !getBalance().isZero()) {
             this.balance = this.balance.minus(OVERDRAFT_PENALTY_FEE);
-            //System.out.println(" New balance: " + getBalance() + ".");
+            
             addTransaction(new Date(), TransactionType.PAID_OVERDRAFT_PENALTY,
                     OVERDRAFT_PENALTY_FEE, this.balance);
         }
     }
 
+    /**
+     * Creates a new Transaction object.
+     * 
+     * @param date Date object when the transaction occured
+     * @param transactionType TransactionType object
+     * @param amount Money object as the amount involve
+     * @param balance Money object as the resulting balance
+     */
     public void addTransaction(Date date, TransactionType transactionType,
             Money amount, Money balance) {
         this.listOfTransactions.add(new Transaction(date, transactionType,
                 amount, balance));
     }
 
+    /**
+     * Checks if the list of transactions is empty.
+     * 
+     * @return True if it is empty otherwise false.
+     */
     public boolean isTransactionsEmpty() {
         return this.listOfTransactions.isEmpty();
     }
 
+    /**
+     * Returns the list of transactions as List object.
+     * 
+     * @return The list of transactions as List object
+     */
     public List<Transaction> getTransactions() {
         return this.listOfTransactions;
     }
 
+    /**
+     * The String equivalent of this object including all
+     * Client objects involve.
+     * 
+     * @return The formatted String object
+     */
     @Override
     public String toString() {
         String client_s = "";

@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gilera.ryan.accountsystem.ui;
 
 /**
- *
+ * An enumeration type to hold String constants for Menu class.
+ * 
  * @author Ryan Gilera
  */
 enum ConstantString {
@@ -105,6 +101,7 @@ enum ConstantString {
     ERROR_OPERATION_CANCELLED("This operation has been cancelled."),
     ERROR_SAME_ACCOUNT_TRANSFER("Error! Same bank account.\n"
             + "Transfer of funds on the same account is not allowed."),
+    ERROR_AMOUNT_INPUT_ZERO("Error! Amount entered is zero."),
     
     ///// CONFIRMATION MESSAGES
     CONFIRM_EXIT_QUESTION("Are you sure you want to exit? \n"

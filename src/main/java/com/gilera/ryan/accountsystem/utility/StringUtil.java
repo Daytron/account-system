@@ -1,16 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gilera.ryan.accountsystem.utility;
 
 /**
- *
+ * A utility class for all String formatting functionalities.
+ * 
  * @author Ryan Gilera
  */
 public class StringUtil {
 
+    /**
+     * Formats the client's name.
+     * 
+     * @param name String object
+     * @return A formatted String object
+     */
     public static String formatClientName(String name) {
         // Remove extra spaces in the beginning and at the end
         name = name.trim();
@@ -32,6 +34,13 @@ public class StringUtil {
         return tempNameHolder.toString();
     }
 
+    /**
+     * Removes any extra spaces except the single space
+     * between first and last name.
+     * 
+     * @param name String object
+     * @return A formatted String object
+     */
     public static String removeExtraSpacesInName(String name) {
         // First it trims extra spaces in the beginning and end
         // Replaces all 1 or more spaces in between to single space

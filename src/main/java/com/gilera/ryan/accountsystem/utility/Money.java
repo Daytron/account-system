@@ -1,15 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gilera.ryan.accountsystem.utility;
 
 import java.text.NumberFormat;
 import java.util.Objects;
 
 /**
- *
+ * The Money class for representing monetary values.
+ * This class is an immutable type, one cannot change 
+ * the value of the object. An operation results to 
+ * create a new object rather than change the instance
+ * variables.
+ * 
  * @author Ryan Gilera
  */
 public final class Money {
@@ -74,7 +74,6 @@ public final class Money {
     }
 
     /**
-     * <p>
      * A Money object factory. Returns a new instance of @see
      * com.github.daytron.accountsystem.Money .
      *
@@ -89,8 +88,6 @@ public final class Money {
      * </ul>
      *
      *
-     *
-     * <p>
      * IllegalArgumentException conditions:
      * <ul>
      * <li>Can only accept 999 Billion max Does
@@ -141,6 +138,17 @@ public final class Money {
         return sign;
     }
 
+    /**
+     * Private method for parsing String number value.
+     * 
+     * @param valueString A String object as value
+     * @param isPenceOnly A boolean object. If true, 
+     * the third decimal place and beyond is cutoff, 
+     * otherwise not cutoff.
+     * @return A String array object for sign (0 for
+     * negative, 1 for positive), whole units and
+     * decimal units.
+     */
     private static String[] parseValue(String valueString, boolean isPenceOnly) {
         // First element = sign 1 for positive and 0 for negative
         // Second element for pounds
@@ -267,6 +275,12 @@ public final class Money {
         }
     }
 
+    /**
+     * Addition operation.
+     * 
+     * @param money A Money object to be added with
+     * @return A new Money object as sum
+     */
     public Money plus(Money money) {
         if (money == null) {
             return null;
@@ -351,6 +365,12 @@ public final class Money {
         return new Money(newSign, newPounds, newPence);
     }
 
+    /**
+     * Subtraction operation.
+     * 
+     * @param money A Money object to be subtracted with
+     * @return A new Money object as difference
+     */
     public Money minus(Money money) {
         if (money == null) {
             return null;
@@ -360,6 +380,12 @@ public final class Money {
                 money.getPounds(), money.getPence()));
     }
 
+    /**
+     * Multiplication operation.
+     * 
+     * @param valueString A String value to be multiplied with
+     * @return A new Money object as product
+     */
     public Money multipliedBy(String valueString) {
         if (valueString == null || valueString.isEmpty()) {
             return null;
@@ -472,6 +498,12 @@ public final class Money {
 
     }
 
+    /**
+     * Multiplication operation.
+     * 
+     * @param money A Money object to be multiplied with
+     * @return A new Money object as product
+     */
     public Money multipliedBy(Money money) {
         if (money == null) {
             return null;
@@ -480,6 +512,12 @@ public final class Money {
         return multipliedBy(money.toString());
     }
 
+    /**
+     * Division operation.
+     * 
+     * @param money A Money object to be divided with
+     * @return A new Money object as quotient
+     */
     public Money dividedBy(Money money) {
         // Division by zero is undefined
         if (money == null || money.isZero()) {
@@ -521,7 +559,7 @@ public final class Money {
             tempThisMoney += Long.toString(getPence());
         }
 
-        // Convert thisMoney to String literal
+        // Convert thatMoney to String literal
         // Ex. 12.34 = "1234"
         // 12 = "1200"
         String tempThatMoney = Long.toString(money.getPounds());

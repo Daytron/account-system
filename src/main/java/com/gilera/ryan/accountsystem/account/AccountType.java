@@ -1,15 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.gilera.ryan.accountsystem.account;
 
 import com.gilera.ryan.accountsystem.utility.Money;
 import com.gilera.ryan.accountsystem.utility.Sign;
 
 /**
- *
+ * An enumeration type for holding all constant values
+ * for all types of accounts.
+ * 
  * @author Ryan Gilera
  */
 public enum AccountType {
