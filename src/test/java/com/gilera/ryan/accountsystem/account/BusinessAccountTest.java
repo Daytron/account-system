@@ -200,6 +200,7 @@ public class BusinessAccountTest {
     }
     
     @Test
+    @Ignore
     public void testApplyOverdraftPenaltyIfPossible() {
         // Case 1: Balance > 0
         // Given
